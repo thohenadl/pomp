@@ -53,10 +53,17 @@ if __name__ == "__main__":
     # Read tagged actions & clean for context only
     tagged_file = find_file(sys.argv[1], path_to_files + "\\" +  pomp_tagged_dir)
     tagged_Log = prepare_log(tagged_file,0)
-    context_attributes = context_attributes_ActionLogger + context_attributes_smartRPA
-    tagged_Log = tagged_Log[context_attributes]
     
+    # Get all columns that are not specified in the context constant
+    context_attributes = context_attributes_ActionLogger + context_attributes_smartRPA
+    
+    # Remove context attributes from file
+    # Drop was tested, did not work due to "not in list error"
+
     # Read un-tagged log & clean for context data only
+    for (dir_path, dir_names, filenames) in os.walk(path_to_files + "/" + log_dir):
+        for filename in filenames:
+            print(filename)
 
 
     # Iterate over un-tagged log

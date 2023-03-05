@@ -37,7 +37,7 @@ def find_file(filename: str, folder_path: str) -> str:
     """
     # Get a list of all files in the folder
     file_list = os.listdir(folder_path)
-    print(file_list)
+
     # Loop over the file list and check each file name
     for file in file_list:
         if os.path.splitext(file)[0] == filename:
@@ -45,4 +45,5 @@ def find_file(filename: str, folder_path: str) -> str:
             return file
 
     # If the file was not found, return an empty string
-    return ""
+    raise FileNotFoundError("POMP Tagged File not found! \n File-folder ")
+
