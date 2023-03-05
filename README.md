@@ -1,4 +1,6 @@
 # POMP
+by @thohenadl
+
 ## Part of manual Processes
 This repository contains the functionality described in Hohenadl et al´s paper on "POMP: Parts of manual Processes". The POMP-taxonomy allows clustering user interactions in user interface/interaction logs to be clustered into six categories:
 
