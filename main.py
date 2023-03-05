@@ -51,10 +51,13 @@ if __name__ == "__main__":
     args=parser.parse_args()
 
     # Read tagged actions & clean for context only
-    file = find_file(sys.argv[1], path_to_files + "\\" +  pomp_tagged_dir)
-    tagged_Log = prepare_log(file,0)
-    print(tagged_Log)
+    tagged_file = find_file(sys.argv[1], path_to_files + "\\" +  pomp_tagged_dir)
+    tagged_Log = prepare_log(tagged_file,0)
+    context_attributes = context_attributes_ActionLogger + context_attributes_smartRPA
+    tagged_Log = tagged_Log[context_attributes]
+    
     # Read un-tagged log & clean for context data only
+
 
     # Iterate over un-tagged log
 

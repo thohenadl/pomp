@@ -11,10 +11,6 @@ from util.csvUtil import *
 import pandas as pd
 
 
-# Read tagged actions & clean for context only
-def read_tagged_UIs(filename):
-    concat_ContextParam = context_attributes_ActionLogger + context_attributes_smartRPA
-    tagged_UIs = read_csv_and_filter_columns(filename, concat_ContextParam)
 # Generate UI classes
 
 # Read un-tagged log & clean for context data only
