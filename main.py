@@ -59,6 +59,7 @@ if __name__ == "__main__":
     
     # Remove context attributes from file
     # Drop was tested, did not work due to "not in list error"
+    # https://github.com/thohenadl/pomp/issues/1
 
     # Read un-tagged log & clean for context data only
     for (dir_path, dir_names, filenames) in os.walk(path_to_files + "/" + log_dir):
