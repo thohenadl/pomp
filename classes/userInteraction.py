@@ -1,4 +1,5 @@
 import numpy as np
+from const import action_Dimensions
 
 class UserInteraction:
     """
@@ -16,6 +17,7 @@ class UserInteraction:
     def __init__(self):
         self.contextFields = ""
         self.array = []
+        self.pompDim = "Empty Action"
 
     def equals(self, other):
         """
@@ -41,7 +43,7 @@ class UserInteraction:
         """
         return getattr(self, attr_name)
 
-    def set_attribute(self, attr_name, attr_value):
+    def set_attribute(self, attr_name: str, attr_value: any):
         """
         Sets the value of the specified attribute of this UserInteraction instance.
 
@@ -49,6 +51,8 @@ class UserInteraction:
             attr_name (str): The name of the attribute to set the value of.
             attr_value (Any): The value to set the attribute to.
         """
+        if attr_name == "pompDim" and str(attr_value) not in action_Dimensions:
+            raise ValueError(f"POMP dimension must be one of {action_Dimensions}.")
         setattr(self, attr_name, attr_value)
 
     def delete_attribute(self, attr_name):
