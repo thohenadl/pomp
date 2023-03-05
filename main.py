@@ -23,11 +23,13 @@ def prepare_log(log_name, parse_dates=False):
                             error_bad_lines=False, parse_dates=parse_dates)
     return frame
 
-def showGui():
-    gui = MyGUI()
+def showGui(filename):
+    gui = MyGUI(filename)
     gui.run()
 
 if __name__ == "__main__":
-    log = prepare_log(log_name, parse_dates=False)
+    for (dir_path, dir_names, filenames) in os.walk(path_to_files + "/" + log_dir):
+        for filename in filenames:
+            showGui(filename)
 
-    showGui()
+    
