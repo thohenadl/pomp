@@ -51,6 +51,9 @@ if __name__ == "__main__":
     parser.add_argument('Tagged Log', type=str, default="", help='Log tagged with POMP Categories')
     args=parser.parse_args()
 
+    print("*************************")
+    print("New execution started \n")
+
     # Read tagged actions & clean for context only
     tagged_file = find_file(sys.argv[1], path_to_files + "\\" +  pomp_tagged_dir)
     df_tagged_log = prepare_log(tagged_file,0,";")
@@ -62,29 +65,23 @@ if __name__ == "__main__":
     # Drop was tested, did not work due to "not in list error"
     # https://github.com/thohenadl/pomp/issues/1
     new_col_list = [col for col in context_attributes if col in df_tagged_log.columns]
+    new_col_list.append("pomp_dim")
     df_tagged_log_context = df_tagged_log[new_col_list]
-
-    print(df_tagged_log_context)
     # Create unique UI repository
-    ui_set = set()
+    tagged_ui_set = set()
 
-    row_1 = ui.userInteraction(df_tagged_log_context.iloc[22].to_frame().T)
-    row_2 = ui.userInteraction(df_tagged_log_context.iloc[23].to_frame().T)
-    ui_set.add(row_1)
-    print(row_1 in ui_set)
-    print(row_2 in ui_set)
-    print(row_1 == row_2)
+    # Addes unique user interaction that were gathered from the tagged file
+    for index, row in df_tagged_log_context.iterrows():
+        row_df = row.to_frame().T
+        row_UI = ui.userInteraction(row_df)
+        print(row_df["pomp_dim"].iloc[0])
+        row_UI.set_attribute("pompDim",row_df["pomp_dim"].iloc[0])
+        if row_UI not in tagged_ui_set:
+            print("Added " + str(row_UI))
+            tagged_ui_set.add(row_UI)
 
-    # for index, row in df_tagged_log_context.iterrows():
-    #     row_df = row.to_frame().T
-    #     row_UI = ui.userInteraction(row_df)
-    #     print(row_UI.get_attribute("context_fields_str"))
-    #     if row_UI not in ui_set:
-    #         print("Added " + str(row_UI))
-    #         ui_set.add(row_UI)
-
-    print(len(ui_set))
-    print(ui_set)
+    print(len(tagged_ui_set))
+    print(tagged_ui_set)
 
     # Read un-tagged log & clean for context data only
     for (dir_path, dir_names, filenames) in os.walk(path_to_files + "/" + log_dir):

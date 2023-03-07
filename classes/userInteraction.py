@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 from const import action_Dimensions
 
+from const import TERMS_FOR_MISSING
+
 class userInteraction:
     """
     A user Interaction (UI) is a set of context parameters, which can have two forms: 
@@ -18,6 +20,7 @@ class userInteraction:
     def __init__(self,context: pd.DataFrame):
         # Array with Context attributes and values
         self.context_Array = context.dropna(axis=1)
+        self.drop_columns_with_TermsForMissing()
         # Place Holder
         self.context_fields_str = ""
         self.setContextString()
@@ -25,10 +28,19 @@ class userInteraction:
         self.pompDim = ""
         self.hash = hash(self)
 
-    
+    def drop_columns_with_TermsForMissing(self):
+        """
+        Drops all columns from a Context Array DataFrame that contain any value from a provided list.
+        Drop is conducted inplace, thus no return required.
+
+        Parameters:
+            self (User Interaction): The user interaction the method is called on.
+        """
+        for col in self.context_Array.columns:
+            if any(self.context_Array[col].isin(TERMS_FOR_MISSING)):
+                self.context_Array.drop(col, axis=1, inplace=True)
 
     def setContextString(self):
-        # To Do: get row from the context array
         row_str = ', '.join(str(val) for val in self.context_Array.iloc[0])
         self.context_fields_str = row_str
 
@@ -44,9 +56,6 @@ class userInteraction:
         """
         # print("Context Fields string equals:" + str(self.context_fields_str == other.context_fields_str))
         # print("Context Array equals:" + str(np.array_equal(self.context_Array, other.context_Array)))
-
-        # Issue #2: Comparing NAN Values in Arrays is a problem as they are compared as false by default
-        #   Setting equal_nan=True raises an error when executing the function on the arrays
         return self.context_fields_str == other.context_fields_str and np.array_equal(self.context_Array, other.context_Array, equal_nan=True)
 
     def __eq__(self, other: object) -> bool:
