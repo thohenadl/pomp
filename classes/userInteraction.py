@@ -12,10 +12,14 @@ class userInteraction:
 
     Attributes
     ----------
-    context_fields : str
+    context_fields_str : str
         A string representing the context-parameter values of the interaction.
     context_Array : array
         An array representing context-parameter values in of the user interaction.
+    pompDim: str
+        A string tagging the UI with the POMP Dimension by Hohenadl
+    bounday: str
+        A boolean tagging the UI if it is a micro-task boundary
     """
     def __init__(self,context: pd.DataFrame):
         # Array with Context attributes and values
@@ -24,8 +28,9 @@ class userInteraction:
         # Place Holder
         self.context_fields_str = ""
         self.setContextString()
-        # Placeholder for the Parts of manual processes dimension
-        self.pompDim = ""
+        # Placeholders
+        self.pompDim = "" # for the Parts of manual processes dimension
+        self.boundary = False # for the Mikro-task boundary tag, Default False
         self.hash = hash(self)
 
     def drop_columns_with_TermsForMissing(self):

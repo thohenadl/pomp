@@ -54,43 +54,33 @@ if __name__ == "__main__":
     print("*************************")
     print("New execution started \n")
 
-    # Read tagged actions & clean for context only
+    # ToDo: Create UI To generate POMP Tagged File into Folder pomp_tagged_dir from const.py
+
+    # (1) Read tagged actions & clean for context only
     tagged_file = find_file(sys.argv[1], path_to_files + "\\" +  pomp_tagged_dir)
     df_tagged_log = prepare_log(tagged_file,0,";")
     
-    # Get all columns that are not specified in the context constant
+    # (2) Get all columns that are not specified in the context constant
     context_attributes = context_attributes_smartRPA + context_attributes_ActionLogger
     
-    # Remove context attributes from file
-    # Drop was tested, did not work due to "not in list error"
-    # https://github.com/thohenadl/pomp/issues/1
-    new_col_list = [col for col in context_attributes if col in df_tagged_log.columns]
-    new_col_list.append("pomp_dim")
-    df_tagged_log_context = df_tagged_log[new_col_list]
-    # Create unique UI repository
-    tagged_ui_set = set()
+    df_tagged_log_context = get_context_parameters_df(df_tagged_log,context_attributes)
 
-    # Addes unique user interaction that were gathered from the tagged file
-    for index, row in df_tagged_log_context.iterrows():
-        row_df = row.to_frame().T
-        row_UI = ui.userInteraction(row_df)
-        print(row_df["pomp_dim"].iloc[0])
-        row_UI.set_attribute("pompDim",row_df["pomp_dim"].iloc[0])
-        if row_UI not in tagged_ui_set:
-            print("Added " + str(row_UI))
-            tagged_ui_set.add(row_UI)
-
-    print(len(tagged_ui_set))
+    # (3) Addes unique user interaction that were gathered from the tagged file to a set
+    tagged_ui_set = generate_unique_UI_set(df_tagged_log_context)
     print(tagged_ui_set)
 
-    # Read un-tagged log & clean for context data only
+    # (4) Read un-tagged log & clean for context data only
+    # (4.0) Add column if not exists: pomp_dim
+    # (4.1) Iterate over un-tagged log and tag
+    # (4.1a) If a tagged UI exists than tag pomp_dim
+    # (4.1b) If no tagged UI exists, than add to untagged_UI Set
+    # (4.2) Store File in output folder from const.py  
+    
+    untagged_ui = set()
     for (dir_path, dir_names, filenames) in os.walk(path_to_files + "/" + log_dir):
         for filename in filenames:
-            print(filename)
+            file = prepare_log(filename,1,";")
+            
+    
 
-
-    # Iterate over un-tagged log
-
-    # Append Empty Actions to Tagged File
-
-    # Store files        
+      
