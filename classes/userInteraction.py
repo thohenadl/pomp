@@ -1,7 +1,8 @@
 import numpy as np
+import pandas as pd
 from const import action_Dimensions
 
-class UserInteraction:
+class userInteraction:
     """
     A user Interaction (UI) is a set of context parameters, which can have two forms: 
         a) string of context-parameter values
@@ -11,13 +12,25 @@ class UserInteraction:
     ----------
     context_fields : str
         A string representing the context-parameter values of the interaction.
-    data : list
-        A list representing context-parameter values in of the user interaction.
+    context_Array : array
+        An array representing context-parameter values in of the user interaction.
     """
-    def __init__(self):
-        self.contextFields = ""
-        self.array = []
-        self.pompDim = "Empty Action"
+    def __init__(self,context: pd.DataFrame):
+        # Array with Context attributes and values
+        self.context_Array = context.dropna(axis=1)
+        # Place Holder
+        self.context_fields_str = ""
+        self.setContextString()
+        # Placeholder for the Parts of manual processes dimension
+        self.pompDim = ""
+        self.hash = hash(self)
+
+    
+
+    def setContextString(self):
+        # To Do: get row from the context array
+        row_str = ', '.join(str(val) for val in self.context_Array.iloc[0])
+        self.context_fields_str = row_str
 
     def equals(self, other):
         """
@@ -29,7 +42,42 @@ class UserInteraction:
         Returns:
             bool: True if this instance is equal to the other instance, False otherwise.
         """
-        return self.context_fields == other.context_fields and np.array_equal(self.array, other.array)
+        # print("Context Fields string equals:" + str(self.context_fields_str == other.context_fields_str))
+        # print("Context Array equals:" + str(np.array_equal(self.context_Array, other.context_Array)))
+
+        # Issue #2: Comparing NAN Values in Arrays is a problem as they are compared as false by default
+        #   Setting equal_nan=True raises an error when executing the function on the arrays
+        return self.context_fields_str == other.context_fields_str and np.array_equal(self.context_Array, other.context_Array, equal_nan=True)
+
+    def __eq__(self, other: object) -> bool:
+        """
+        Checks whether this UserInteraction instance is equal to another instance.
+
+        Args:
+            other (UserInteraction): The other UserInteraction instance to compare against.
+
+        Returns:
+            bool: True if this instance is equal to the other instance, False otherwise.
+        """
+        if not isinstance(other, type(self)):
+            return NotImplemented
+        
+        return self.context_fields_str == other.context_fields_str and np.array_equal(self.context_Array, other.context_Array)
+    
+    def __hash__(self):
+        # As suggested in https://stackoverflow.com/questions/10254594/what-makes-a-user-defined-class-unhashable
+        """
+        Hash method returns the hash of the user interaction object.
+
+        Returns:
+            Hash of context_Array content
+        """
+        return hash(self.context_fields_str)
+    
+    def __iter__(self):
+        # As suggested in https://stackoverflow.com/questions/5434400/python-make-class-iterable
+        for each in self.__dict__.values():
+            yield each
 
     def get_attribute(self, attr_name):
         """
@@ -63,3 +111,25 @@ class UserInteraction:
             attr_name (str): The name of the attribute to delete.
         """
         delattr(self, attr_name)
+
+    def __str__(self):
+        """ 
+        String method to get the User Interaction element.
+
+        Returns:
+            String description
+        """
+        str_len = str(self.context_Array.size)
+        return_str = "User Interaction with " + str_len + " context elements."
+        return return_str
+    
+    def __repr__(self):
+        """ 
+        Representation method to get the User Interaction element.
+
+        Returns:
+            String description
+        """
+        str_len = str(self.context_Array.size)
+        return_str = "User Interaction with " + str_len + " context elements."
+        return return_str

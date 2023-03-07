@@ -13,6 +13,11 @@ context_attributes_smartRPA = ["category","application","event_type","worksheets
 semantic_attributes = ["target.innerText", "target.name"] # "tag_type"
 value_attributes = ["target.innerText", "url", "target.value", "content"]
 
+TERMS_FOR_MISSING = ['MISSING', 'UNDEFINED', 'undefined', 'missing', 'none', 'nan', 'empty', 'empties', 'unknown',
+                     'other', 'others', 'na', 'nil', 'null', '', "", ' ', '<unknown>', "0;n/a", "NIL", 'undefined',
+                     'missing', 'none', 'nan', 'empty', 'empties', 'unknown', 'other', 'others', 'na',
+                     'nil', 'null', '', ' ']
+
 
 # POMP Action Dimensions
 action_Dimensions = ["Open Action", "Navigate Action", "Transform Action", "Transfer Action","Conclude Action", "Close Action", "Empty Action"]

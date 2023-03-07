@@ -6,12 +6,20 @@ import classes.userInteraction
 
 # Import Util
 from util.csvUtil import *
+from const import TERMS_FOR_MISSING
 
 # Import necessary libaries
 import pandas as pd
 
 
 # Generate UI classes
+def create_value_tup(row):
+    tup = []
+    for att in row:
+        if str(row[att]) not in TERMS_FOR_MISSING:
+            tup.append(str(row[att]))
+    return tup
+
 
 # Read un-tagged log & clean for context data only
 
