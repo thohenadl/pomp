@@ -91,7 +91,11 @@ if __name__ == "__main__":
                 userInteraction = make_UI(row_df)
                 # Check if the userInteraction exists in the set
                 match = next((x for x in tagged_ui_set if x == userInteraction), None)
-                print(match)
+                if match is None:
+                    untagged_ui.add(userInteraction)
+                else:
+                    # ToDo does return none at the moment
+                    print("Pomp Dim is " + match.get_attribute("pompDim"))
 
     
 
