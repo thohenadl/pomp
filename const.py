@@ -20,4 +20,4 @@ TERMS_FOR_MISSING = ['MISSING', 'UNDEFINED', 'undefined', 'missing', 'none', 'na
 
 
 # POMP Action Dimensions
-action_Dimensions = ["Open Action", "Navigate Action", "Transform Action", "Transfer Action","Conclude Action", "Close Action", "Empty Action"]
+action_Dimensions = ["","Open Action", "Navigate Action", "Transform Action", "Transfer Action","Conclude Action", "Close Action", "Empty Action"]

@@ -62,8 +62,9 @@ if __name__ == "__main__":
     
     # (2) Get all columns that are not specified in the context constant
     context_attributes = context_attributes_smartRPA + context_attributes_ActionLogger
+    context_attributes_wPOMP = context_attributes + ["pomp_Dim"]
     
-    df_tagged_log_context = get_context_parameters_df(df_tagged_log,context_attributes)
+    df_tagged_log_context = get_context_parameters_df(df_tagged_log,context_attributes_wPOMP)
 
     # (3) Addes unique user interaction that were gathered from the tagged file to a set
     tagged_ui_set = generate_unique_UI_set(df_tagged_log_context)
@@ -79,8 +80,19 @@ if __name__ == "__main__":
     untagged_ui = set()
     for (dir_path, dir_names, filenames) in os.walk(path_to_files + "/" + log_dir):
         for filename in filenames:
-            file = prepare_log(filename,1,";")
-            
+            df_file = prepare_log(filename,1,";")
+            df_context_file = get_context_parameters_df(df_file,context_attributes)
+            # Add pomp_dim Column if not existend in fie
+            if 'pomp_dim' not in df_context_file.columns:
+                df_context_file['pomp_dim'] = ""
+            for index, row in df_context_file.iterrows():
+                # Create a UI from the row in the dataframe
+                row_df = row.to_frame().T
+                userInteraction = make_UI(row_df)
+                # Check if the userInteraction exists in the set
+                match = next((x for x in tagged_ui_set if x == userInteraction), None)
+                print(match)
+
     
 
       
