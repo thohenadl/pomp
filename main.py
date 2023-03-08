@@ -5,40 +5,16 @@ import sys
 import argparse
 
 import pandas as pd
-from pm4py.objects.log.importer.xes import importer as xes_importer
+
 
 from classes.MyGUI import MyGUI
 import classes.userInteraction as ui
 
-from util.csvUtil import log_converter, find_file
+from util.csvUtil import log_converter, find_file, prepare_log
 from const import *
 from util.tagging import *
 warnings.simplefilter('ignore')
 
-
-def prepare_log(log_name: str, version: int, seperator: str, parse_dates=False) -> pd.DataFrame:
-    """
-    Prepares a log file and converts .xes or .csv into a Pandas Dataframe
-
-    Args:
-        log_name (str): The name of the file to prepare
-        version (int): 0 for tagged input, 1 for empty input
-
-    Returns:
-        pd.Dataframe: A pandas Dataframe including the read log file
-    """
-    directory = ""
-    if version == 0:
-        directory = pomp_tagged_dir
-    else:
-        directory = log_dir
-    if ".xes" in log_name:
-        log1 = xes_importer.apply(os.path.join(path_to_files, directory, log_name))
-        frame = log_converter.apply(log1, variant=log_converter.Variants.TO_DATA_FRAME)
-        frame = frame.reset_index()
-    else:
-        frame = pd.read_csv(path_to_files + "/" + directory + "/" + log_name, sep=seperator, quotechar='"', engine="python", error_bad_lines=False, parse_dates=parse_dates)
-    return frame
 
 def showGui(filename):
     gui = MyGUI(filename)
@@ -62,13 +38,12 @@ if __name__ == "__main__":
     
     # (2) Get all columns that are not specified in the context constant
     context_attributes = context_attributes_smartRPA + context_attributes_ActionLogger
-    context_attributes_wPOMP = context_attributes + ["pomp_Dim"]
-    
+    context_attributes_wPOMP = context_attributes + ["pomp_dim"]
+
     df_tagged_log_context = get_context_parameters_df(df_tagged_log,context_attributes_wPOMP)
 
     # (3) Addes unique user interaction that were gathered from the tagged file to a set
     tagged_ui_set = generate_unique_UI_set(df_tagged_log_context)
-    print(tagged_ui_set)
 
     # (4) Read un-tagged log & clean for context data only
     # (4.0) Add column if not exists: pomp_dim
@@ -90,6 +65,8 @@ if __name__ == "__main__":
                 row_df = row.to_frame().T
                 userInteraction = make_UI(row_df)
                 # Check if the userInteraction exists in the set
+                # issue: https://github.com/thohenadl/pomp/issues/2
+                print(userInteraction)
                 match = next((x for x in tagged_ui_set if x == userInteraction), None)
                 if match is None:
                     untagged_ui.add(userInteraction)

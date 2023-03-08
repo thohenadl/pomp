@@ -2,7 +2,33 @@ import pandas as pd
 import os
 from pm4py.objects.log.util import dataframe_utils
 from pm4py.objects.conversion.log import converter as log_converter
+from pm4py.objects.log.importer.xes import importer as xes_importer
 
+from const import *
+
+def prepare_log(log_name: str, version: int, seperator: str, parse_dates=False) -> pd.DataFrame:
+    """
+    Prepares a log file and converts .xes or .csv into a Pandas Dataframe
+
+    Args:
+        log_name (str): The name of the file to prepare
+        version (int): 0 for tagged input, 1 for empty input
+
+    Returns:
+        pd.Dataframe: A pandas Dataframe including the read log file
+    """
+    directory = ""
+    if version == 0:
+        directory = pomp_tagged_dir
+    else:
+        directory = log_dir
+    if ".xes" in log_name:
+        log1 = xes_importer.apply(os.path.join(path_to_files, directory, log_name))
+        frame = log_converter.apply(log1, variant=log_converter.Variants.TO_DATA_FRAME)
+        frame = frame.reset_index()
+    else:
+        frame = pd.read_csv(path_to_files + "/" + directory + "/" + log_name, sep=seperator, quotechar='"', engine="python", error_bad_lines=False, parse_dates=parse_dates)
+    return frame
 
 def load_and_convert_to_log(path, case, timestamp, sep):
     log_csv = read_csv(path, sep)

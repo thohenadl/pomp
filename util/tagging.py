@@ -55,7 +55,7 @@ def generate_unique_UI_set(log: pd.DataFrame) -> set:
 
         # Check if User Interaction is already in unique set and if add to set
         if row_UI not in unique_UI_set:
-            print("Added " + str(row_UI))
+            # print("Added " + str(row_UI))
             unique_UI_set.add(row_UI)
 
     # Return set of unique user interactions
@@ -72,6 +72,7 @@ def make_UI(row: pd.DataFrame) -> classes.userInteraction:
         action (UserInteraction): A user interaction class object
     """
     action = ui.userInteraction(row)
+
     # Check if the DataFrame has the pomp_dim tag as column and if add to UI
     if 'pomp_dim' in row.columns:
         action.set_attribute("pompDim",row["pomp_dim"].iloc[0])
