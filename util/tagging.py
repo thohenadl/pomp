@@ -12,7 +12,7 @@ import classes.userInteraction as ui
 # Import necessary libaries
 import pandas as pd
 
-def get_context_parameters_df(log: pd.DataFrame, context_attributes: list) -> pd.DataFrame:
+def get_col_filtered_df(log: pd.DataFrame, context_attributes: list) -> pd.DataFrame:
     """
     Remove context attributes from Datafrae
 
@@ -49,9 +49,9 @@ def generate_unique_UI_set(log: pd.DataFrame) -> set:
     for index, row in log.iterrows():
         # Create a dataframe from the row, which is added to the userInteraction
         row_df = row.to_frame().T
-        
+
         # Create a new user Interaction
-        row_UI = make_UI(row_df)
+        row_UI = ui.userInteraction(row_df)
         
         # Check if User Interaction is already in unique set and if add to set
         if row_UI not in unique_UI_set:
@@ -60,24 +60,6 @@ def generate_unique_UI_set(log: pd.DataFrame) -> set:
 
     # Return set of unique user interactions
     return unique_UI_set
-
-def make_UI(row: pd.DataFrame) -> classes.userInteraction:
-    """
-    Returns an user interaction class object from a dataframe row
-    
-    Args:
-        row (DataFrame): A row of a user interaction log in DataFrame format
-        
-    Returns:
-        action (UserInteraction): A user interaction class object
-    """
-    action = ui.userInteraction(row.drop(['pomp_dim'],axis=1))
-    # Check if the DataFrame has the pomp_dim tag as column and if add to UI
-    if 'pomp_dim' in row.columns:
-        action.set_attribute("pompDim",row["pomp_dim"].iloc[0])
-    # Check if User Interaction is already in unique set and if add to set
-
-    return action
 
 # Iterate over un-tagged log
 def tag_UI_w_POMP(df_untagged: pd.DataFrame, set_tagged_UI: set) -> pd.DataFrame:

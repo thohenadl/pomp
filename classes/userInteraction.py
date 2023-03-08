@@ -2,7 +2,8 @@ import numpy as np
 import pandas as pd
 from const import action_Dimensions
 
-from const import TERMS_FOR_MISSING
+from const import TERMS_FOR_MISSING, context_attributes_ActionLogger, context_attributes_smartRPA
+from util.tagging import get_col_filtered_df
 
 class userInteraction:
     """
@@ -76,7 +77,7 @@ class userInteraction:
         """
         return self.equals(other)
     
-    def compare_context(self, other: object, columns: list) -> bool:
+    def compare_columns(self, other: object, columns: list) -> bool:
         """
         Compare two user Interactions on a list of specified columns.
 
@@ -90,7 +91,10 @@ class userInteraction:
         """   
         # The comparison on the context_array works IF both arrays were created
         # with the same make_ui from tagging.py and same context_attributes from const.py
-        return self.context_array.equals(other.context_array)
+        df1 = get_col_filtered_df(self.context_array,columns)
+        df2 = get_col_filtered_df(other.context_array,columns)
+        print(df1.equals(df2))
+        return df1.equals(df2)
     
     def __hash__(self):
         # As suggested in https://stackoverflow.com/questions/10254594/what-makes-a-user-defined-class-unhashable

@@ -40,7 +40,7 @@ if __name__ == "__main__":
     context_attributes = context_attributes_smartRPA + context_attributes_ActionLogger
     context_attributes_wPOMP = context_attributes + ["pomp_dim"]
 
-    df_tagged_log_context = get_context_parameters_df(df_tagged_log,context_attributes_wPOMP)
+    df_tagged_log_context = get_col_filtered_df(df_tagged_log,context_attributes_wPOMP)
 
     # (3) Addes unique user interaction that were gathered from the tagged file to a set
     tagged_ui_set = generate_unique_UI_set(df_tagged_log_context)
@@ -58,7 +58,7 @@ if __name__ == "__main__":
     for (dir_path, dir_names, filenames) in os.walk(path_to_files + "/" + log_dir):
         for filename in filenames:
             df_file = prepare_log(filename,1,";")
-            df_context_file = get_context_parameters_df(df_file,context_attributes)
+            df_context_file = get_col_filtered_df(df_file,context_attributes)
             lenth_file = len(df_context_file)
             # Add pomp_dim Column if not existend in file
             if 'pomp_dim' not in df_context_file.columns:
@@ -66,12 +66,12 @@ if __name__ == "__main__":
             for index, row in df_context_file.iterrows():
                 # Create a UI from the row in the dataframe
                 row_df = row.to_frame().T
-                userInteraction = make_UI(row_df)
+                userInteraction = ui.userInteraction(row_df)
                 # Check if the userInteraction exists in the set
                 # issue: https://github.com/thohenadl/pomp/issues/2
                 # Compares two User Interactions only on the context_attributes
                 # ToDo: Compare Method always returns false at the moment
-                match = next((x for x in tagged_ui_set if x.compare_context(userInteraction,context_attributes)), None)
+                match = next((x for x in tagged_ui_set if x.compare_columns(userInteraction,context_attributes)), None)
                 if match is None: 
                     print("Has no match in labeled: " + str(userInteraction))
                     untagged_ui.add(userInteraction)
