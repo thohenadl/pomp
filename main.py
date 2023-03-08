@@ -55,15 +55,20 @@ if __name__ == "__main__":
     untagged_ui = set()
     newly_tagged = set()
     lenth_file = -1
+    # Get all files in folder
     for (dir_path, dir_names, filenames) in os.walk(path_to_files + "/" + log_dir):
+        # Iterate over files in folder that should be tagged
         for filename in filenames:
+            # Prepare File
             df_file = prepare_log(filename,1,";")
+            # Filter on context attributes
             df_context_file = get_col_filtered_df(df_file,context_attributes)
             lenth_file = len(df_context_file)
-            # Add pomp_dim Column if not existend in file
-            if 'pomp_dim' not in df_context_file.columns:
-                df_context_file['pomp_dim'] = ""
-            for index, row in df_context_file.iterrows():
+            # Add pomp_dim Column to original df if not existend in file
+            if 'pomp_dim' not in df_file.columns:
+                df_file['pomp_dim'] = ""
+            # To Do: Remove iloc to get complete array
+            for index, row in df_context_file.iloc[:2].iterrows():
                 # Create a UI from the row in the dataframe
                 row_df = row.to_frame().T
                 userInteraction = ui.userInteraction(row_df)
