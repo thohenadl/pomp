@@ -13,3 +13,4 @@
 1;-1;;tomho;Browser;Edge;missing;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 1;0;2023-01-17T16:07:20.889;tomho;Browser;Edge;changeField;;;;;;;;;;;;;;;;LGODItGwnOuKEPbZ;;;https://www.sskm.de/fi/home/onlinebanking/nbf/banking/einzelauftrag.html?sp:ct=TUFJTkBwb3J0YWw%3D;;;;;;;;;;;INPUT;text;LGODItGwnOuKEPbZ;;123123;;;;;;{'type': 'text', 'name': 'LGODItGwnOuKEPbZ', 'id': 'LGODItGwnOuKEPbZ', 'value': '', 'class': 'format-tan im', 'maxlength': '6'};"id(""LGODItGwnOuKEPbZ"")";/HTML[1]/BODY[1]/DIV[1]/SECTION[1]/DIV[1]/DIV[1]/DIV[2]/FORM[1]/DIV[5]/DIV[2]/INPUT[1]
 1;0;2023-01-17T16:07:21.530;tomho;Browser;Edge;link;;;;;;;;;;;;;;;;;;;https://www.sskm.de/fi/home/onlinebanking/nbf/banking/einzelauftrag.html?sp:ct=TUFJTkBwb3J0YWw%3D;"[""serverRedirect""]";;;;;;;;;;;;;;;;;;;;;;
+3;;2023-02-08T16:35:18.032;tomho;Browser;Edge;link;;;;;;;;;;;;;;;;;;;https://www.sskm.de/fi/home/onlinebanking/nbf/umsaetze.html?sp:ct=TUFJTkBwb3J0YWw%3D;"[""serverRedirect""]";;;;;;;;;;;;;;;;;;;;;;

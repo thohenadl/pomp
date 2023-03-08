@@ -53,11 +53,14 @@ if __name__ == "__main__":
     # (4.2) Store File in output folder from const.py  
     
     untagged_ui = set()
+    newly_tagged = set()
+    lenth_file = -1
     for (dir_path, dir_names, filenames) in os.walk(path_to_files + "/" + log_dir):
         for filename in filenames:
             df_file = prepare_log(filename,1,";")
             df_context_file = get_context_parameters_df(df_file,context_attributes)
-            # Add pomp_dim Column if not existend in fie
+            lenth_file = len(df_context_file)
+            # Add pomp_dim Column if not existend in file
             if 'pomp_dim' not in df_context_file.columns:
                 df_context_file['pomp_dim'] = ""
             for index, row in df_context_file.iterrows():
@@ -66,14 +69,21 @@ if __name__ == "__main__":
                 userInteraction = make_UI(row_df)
                 # Check if the userInteraction exists in the set
                 # issue: https://github.com/thohenadl/pomp/issues/2
-                print(userInteraction)
-                match = next((x for x in tagged_ui_set if x == userInteraction), None)
+                # Compares two User Interactions only on the context_attributes
+                # ToDo: Compare Method always returns false at the moment
+                match = next((x for x in tagged_ui_set if x.compare_context_on_columns(userInteraction,context_attributes)), None)
                 if match is None:
+                    print("Has no match in labeled: " + str(userInteraction))
                     untagged_ui.add(userInteraction)
                 else:
+                    newly_tagged.add(userInteraction)
                     # ToDo does return none at the moment
                     print("Pomp Dim is " + match.get_attribute("pompDim"))
-
+                print("********** Index: " + str(index) + " ************")
+    
+    print(len(untagged_ui))
+    print(len(newly_tagged))
+    print(lenth_file)
     
 
       

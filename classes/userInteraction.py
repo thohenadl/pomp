@@ -23,7 +23,7 @@ class userInteraction:
     """
     def __init__(self,context: pd.DataFrame):
         # Array with Context attributes and values
-        self.context_Array = context.dropna(axis=1)
+        self.context_array = context.dropna(axis=1)
         self.drop_columns_with_TermsForMissing()
         # Place Holder
         self.context_fields_str = ""
@@ -41,12 +41,12 @@ class userInteraction:
         Parameters:
             self (User Interaction): The user interaction the method is called on.
         """
-        for col in self.context_Array.columns:
-            if any(self.context_Array[col].isin(TERMS_FOR_MISSING)):
-                self.context_Array.drop(col, axis=1, inplace=True)
+        for col in self.context_array.columns:
+            if any(self.context_array[col].isin(TERMS_FOR_MISSING)):
+                self.context_array.drop(col, axis=1, inplace=True)
 
     def setContextString(self):
-        row_str = ', '.join(str(val) for val in self.context_Array.iloc[0])
+        row_str = ', '.join(str(val) for val in self.context_array.iloc[0])
         self.context_fields_str = row_str
 
     def equals(self, other):
@@ -61,7 +61,7 @@ class userInteraction:
         """
         # print("Context Fields string equals:" + str(self.context_fields_str == other.context_fields_str))
         # print("Context Array equals:" + str(np.array_equal(self.context_Array, other.context_Array)))
-        return self.context_fields_str == other.context_fields_str and np.array_equal(self.context_Array, other.context_Array, equal_nan=True)
+        return self.context_fields_str == other.context_fields_str and np.array_equal(self.context_array, other.context_Array, equal_nan=True)
 
     def __eq__(self, other: object) -> bool:
         """
@@ -74,9 +74,38 @@ class userInteraction:
             bool: True if this instance is equal to the other instance, False otherwise.
         """
         if not isinstance(other, type(self)):
-            return NotImplemented
+            # Returns false if the types are different, because the object are different
+            return False
         
-        return self.context_fields_str == other.context_fields_str and np.array_equal(self.context_Array, other.context_Array)
+        return self.context_fields_str == other.context_fields_str and np.array_equal(self.context_array, other.context_array)
+    
+    def compare_context_on_columns(self, other: object, columns: list) -> bool:
+        """
+        Compare two user Interactions on a list of specified columns.
+
+        Parameters:
+            other (userInteraction): User Interaction to compare on column list.
+            columns (list): List of column indices to compare.
+
+        Returns:
+            bool: True if the specified columns in the two arrays are equal,
+                False otherwise.
+        """
+        print("New Compare")
+        for col_idx in columns:
+            if col_idx not in self.context_array.columns or col_idx not in other.context_array.columns:
+                print("we are false")
+                return False
+            # Solves cannot compare differently labled series objects error:
+            # https://www.geeksforgeeks.org/how-to-fix-can-only-compare-identically-labeled-series-objects/
+            # print((self.context_array[col_idx].reset_index(drop=True) == other.context_array[col_idx].reset_index(drop=True)).all())
+            # print(self.context_array[col_idx])
+            # print(other.context_array[col_idx])
+            if not (self.context_array[col_idx].reset_index(drop=True) == other.context_array[col_idx].reset_index(drop=True)).all():
+                print("we are also false")
+                return False
+        return True
+
     
     def __hash__(self):
         # As suggested in https://stackoverflow.com/questions/10254594/what-makes-a-user-defined-class-unhashable
@@ -133,7 +162,7 @@ class userInteraction:
         Returns:
             String description
         """
-        str_len = str(self.context_Array.size)
+        str_len = str(self.context_array.size)
         return_str = "User Interaction with " + str_len + " context elements."
         return return_str
     
@@ -144,6 +173,6 @@ class userInteraction:
         Returns:
             String description
         """
-        str_len = str(self.context_Array.size)
+        str_len = str(self.context_array.size)
         return_str = "User Interaction with " + str_len + " context elements."
         return return_str
