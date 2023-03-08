@@ -71,8 +71,8 @@ if __name__ == "__main__":
                 # issue: https://github.com/thohenadl/pomp/issues/2
                 # Compares two User Interactions only on the context_attributes
                 # ToDo: Compare Method always returns false at the moment
-                match = next((x for x in tagged_ui_set if x.compare_context_on_columns(userInteraction,context_attributes)), None)
-                if match is None:
+                match = next((x for x in tagged_ui_set if x.compare_context(userInteraction,context_attributes)), None)
+                if match is None: 
                     print("Has no match in labeled: " + str(userInteraction))
                     untagged_ui.add(userInteraction)
                 else:

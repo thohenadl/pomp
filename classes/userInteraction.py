@@ -31,6 +31,10 @@ class userInteraction:
         self.setContextString()
         # Placeholders
         self.pompDim = "" # for the Parts of manual processes dimension
+        # Add the Pomp Dim Tag and remove it from context parameters
+        if 'pomp_dim' in self.context_array.columns:
+            self.set_attribute('pompDim',self.context_array['pomp_dim'].iloc[0])
+            self.context_array.drop('pomp_dim',axis=1,inplace=True)
         self.boundary = False # for the Mikro-task boundary tag, Default False
         self.hash = hash(self)
 
@@ -60,8 +64,6 @@ class userInteraction:
         Returns:
             bool: True if this instance is equal to the other instance, False otherwise.
         """
-        # print("Context Fields string equals:" + str(self.context_fields_str == other.context_fields_str))
-        # print("Context Array equals:" + str(np.array_equal(self.context_Array, other.context_Array)))
         if not isinstance(other, type(self)):
             # Returns false if the types are different, because the object are different
             return False
@@ -74,7 +76,7 @@ class userInteraction:
         """
         return self.equals(other)
     
-    def compare_context_on_columns(self, other: object, columns: list) -> bool:
+    def compare_context(self, other: object, columns: list) -> bool:
         """
         Compare two user Interactions on a list of specified columns.
 
@@ -86,18 +88,9 @@ class userInteraction:
             bool: True if the specified columns in the two arrays are equal,
                 False otherwise.
         """   
-        if not (self.context_array.equals(other.context_array)):
-
-            return False
-
-        return True
-
-    def create_value_tup(self, row):
-        tup = []
-        for att in self.value_attributes:
-            if str(row[att]) not in TERMS_FOR_MISSING:
-                tup.append(str(row[att]))
-        return tup
+        # The comparison on the context_array works IF both arrays were created
+        # with the same make_ui from tagging.py and same context_attributes from const.py
+        return self.context_array.equals(other.context_array)
     
     def __hash__(self):
         # As suggested in https://stackoverflow.com/questions/10254594/what-makes-a-user-defined-class-unhashable

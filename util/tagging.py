@@ -49,16 +49,9 @@ def generate_unique_UI_set(log: pd.DataFrame) -> set:
     for index, row in log.iterrows():
         # Create a dataframe from the row, which is added to the userInteraction
         row_df = row.to_frame().T
+        
         # Create a new user Interaction
-        # Only with context parameters
-        # Set pomp_dim if available in dataframe
-        if 'pomp_dim' in row_df.columns:
-            print(row_df.columns)
-            row_df_wo_pomp = row_df.drop(['pomp_dim'],axis=1)
-            row_UI = make_UI(row_df_wo_pomp)
-            row_UI.set_attribute("pompDim",row_df['pomp_dim'].iloc[0])
-        else:
-            row_UI = make_UI(row_df)
+        row_UI = make_UI(row_df)
         
         # Check if User Interaction is already in unique set and if add to set
         if row_UI not in unique_UI_set:
@@ -70,7 +63,7 @@ def generate_unique_UI_set(log: pd.DataFrame) -> set:
 
 def make_UI(row: pd.DataFrame) -> classes.userInteraction:
     """
-    Makes an user interaction class object from a dataframe row
+    Returns an user interaction class object from a dataframe row
     
     Args:
         row (DataFrame): A row of a user interaction log in DataFrame format
@@ -78,12 +71,10 @@ def make_UI(row: pd.DataFrame) -> classes.userInteraction:
     Returns:
         action (UserInteraction): A user interaction class object
     """
-    action = ui.userInteraction(row)
-
+    action = ui.userInteraction(row.drop(['pomp_dim'],axis=1))
     # Check if the DataFrame has the pomp_dim tag as column and if add to UI
     if 'pomp_dim' in row.columns:
         action.set_attribute("pompDim",row["pomp_dim"].iloc[0])
-
     # Check if User Interaction is already in unique set and if add to set
 
     return action
