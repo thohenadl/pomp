@@ -16,21 +16,23 @@ from util.tagging import *
 warnings.simplefilter('ignore')
 
 
-def showGui(filename):
-    gui = MyGUI(filename)
+def showGui():
+    gui = MyGUI()
     gui.run()
 
 if __name__ == "__main__":
-    parser=argparse.ArgumentParser(
-        description='''Tool vtagging an user interaction log with POMP categories''',
-        epilog="""For more information see source code comments.""")
-    parser.add_argument('Tagged Log', type=str, default="", help='Log tagged with POMP Categories')
-    args=parser.parse_args()
+    parser = argparse.ArgumentParser(
+        description = '''Tool vtagging an user interaction log with POMP categories''',
+        epilog      = """For more information see source code comments."""
+    )
+    args = parser.parse_args()
 
-    # print("*************************")
-    # print("New execution started \n")
 
-    # # ToDo: Create UI To generate POMP Tagged File into Folder pomp_tagged_dir from const.py
+    print("*************************")
+    print("New execution started \n")
+
+    # ToDo: Create UI To generate POMP Tagged File into Folder pomp_tagged_dir from const.py
+    showGui()
 
     # # (1) Read tagged actions & clean for context only
     # tagged_file = find_file(sys.argv[1], path_to_files + "\\" +  pomp_tagged_dir)
