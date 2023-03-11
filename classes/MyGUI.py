@@ -12,6 +12,7 @@ class MyGUI:
         self.master = self.root
         self.master.title("POMP")
         self.result = None
+        self.currentLine = 0
 
         self.create_file_dropdown()
     
@@ -51,7 +52,7 @@ class MyGUI:
 
         # Create a 2D numpy array
         if extension == ".csv":
-            arr = pd.read_csv(
+            self.arr = pd.read_csv(
                 path_to_files + "/" + log_dir + "/" + filename, 
                 sep             = ";", 
                 quotechar       = '"', 
@@ -59,7 +60,7 @@ class MyGUI:
                 error_bad_lines = False
             )
         elif extension == ".xml":
-            arr = pd.read_xml(path_to_files + "/" + log_dir + "/" + filename)
+            self.arr = pd.read_xml(path_to_files + "/" + log_dir + "/" + filename)
         else:
             # Destroy any existing error labels
             for widget in self.master.winfo_children():
@@ -75,41 +76,30 @@ class MyGUI:
             label.pack()
             return
         
+        if "pomp_dim" in self.arr.columns:
+            self.arr["pomp_dim"] = ""
+        self.currentLine = 0
         self.clear_window()
+        
+        print(self.arr.iloc[self.currentLine])
 
         # Create a Text widget to display the CSV file
         text = tk.Text(self.root)
+        text.insert(tk.END, self.arr.iloc[self.currentLine])
         text.pack()
-
-        # Read the CSV file and insert its contents into the Text widget
-        with open(path_to_files + "/" + log_dir + "/" + filename, 'r') as file:
-            contents = file.read()
-            text.insert(tk.END, contents)
-
-        text.pack()
-
-        # Create a list of possible actions
-        actions = [
-            "Open Action", 
-            "Navigate Action", 
-            "Transform Action", 
-            "Transfer Action",
-            "Conclude Action", 
-            "Close Action", 
-            "Empty Action",
-        ]
 
         # Create a dropdown widget with the list of actions
-        self.action_var = tk.StringVar(self.master)
-        self.action_var.set(actions[0])  # Set the default value
-        self.dropdown = tk.OptionMenu(self.master, self.action_var, *actions)
+        self.dropdown = ttk.Combobox(
+            master = self.master, 
+            values = action_Dimensions
+        )
         self.dropdown.pack()
 
         # Add a submit button to the GUI
         self.submit_button = tk.Button(
             master  = self.master, 
-            text    = "Submit", 
-            command = self.print_input
+            text    = "Submit & go to next line", 
+            command = lambda: self.print_input(self.dropdown.get())
         )
         self.submit_button.pack()
 
@@ -117,7 +107,7 @@ class MyGUI:
         self.finish_button = tk.Button(
             master  = self.master, 
             text    = "Finish", 
-            command = self.master.quit
+            command = lambda: self.finish_input(filename)
         )
         self.finish_button.pack()
 
@@ -129,6 +119,14 @@ class MyGUI:
         self.master.mainloop()
 
     # Define a function to print the selected action
-    def print_input(self):
-        action = self.action_var.get()
+    def print_input(self, action):
         print("Selected Action: ", action)
+
+        if action in action_Dimensions:
+            self.arr.iloc[self.currentLine][self.arr.columns.get_loc("pomp_dim")] = action
+            print(self.arr.iloc[self.currentLine]["pomp_dim"])
+        self.currentLine += 1
+
+    def finish_input(self, filename):
+        # @TODO: write csv / xml back in file (with changes)
+        self.master.quit()
