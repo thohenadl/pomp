@@ -147,9 +147,13 @@ class MyGUI:
         self.currentLine = 0
         self.clear_window()
 
+        self.root.grid_propagate(False)
+        self.root.grid_rowconfigure(0, weight = 1)
+        self.root.grid_columnconfigure(0, weight = 1)
+
         self.widget_current_line_text()
         self.widget_action_dropdown()
-        self.widget_action_dropdown(filename)
+        self.widget_action_buttons(filename)
 
     def widget_current_line_text(self):
         text = tk.Text(
@@ -158,7 +162,7 @@ class MyGUI:
             fg     = "#34495E",
         )
         text.insert(tk.END, self.arr.iloc[self.currentLine])
-        text.grid(column = 1, row = 1, columnspan = 20, rowspan = 3)
+        text.grid(column = 0, row = 0, columnspan = 3, sticky='nsew')
 
     def widget_action_dropdown(self):
         tk.Label(
@@ -169,7 +173,7 @@ class MyGUI:
             bg     = "#f2f2f2",
             padx   = 10,
             pady   = 10,
-        ).grid(column = 21, row = 1)
+        ).grid(column = 0, row = 1, sticky='nsew')
         self.dropdown = ttk.Combobox(
             master  = self.master, 
             values  = action_Dimensions,
@@ -178,7 +182,7 @@ class MyGUI:
             justify = "center",
             width   = 30
         )
-        self.dropdown.grid(column = 21, row = 3)
+        self.dropdown.grid(column = 1, row = 1, columnspan = 3, sticky='nsew')
     
     def widget_action_buttons(self, filename):
         ttk.Button(
@@ -186,14 +190,14 @@ class MyGUI:
             text    = "Submit & go to next line", 
             command = lambda: self.print_input(self.dropdown.get()),
             # style   = "AccentButton",
-        ).grid(column = 22, row = 1)
+        ).grid(column = 1, row = 2, sticky='nsew')
 
         ttk.Button(
             master  = self.master, 
             text    = "Finish & Override file", 
             command = lambda: self.finish_input(filename),
             # style   = "AccentButton",
-        ).grid(column = 22, row = 3)
+        ).grid(column = 2, row = 2, sticky='nsew')
 
     def get_input(self):
         name = self.entry.get()
@@ -207,7 +211,7 @@ class MyGUI:
 
         if action in action_Dimensions:
             self.arr.loc[self.currentLine, "pomp_dim"] = action
-        print(self.arr.iloc[self.currentLine])
+        
         self.currentLine += 1
 
     def finish_input(self, filename):
