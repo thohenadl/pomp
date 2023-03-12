@@ -91,8 +91,8 @@ class userInteraction:
         """   
         # The comparison on the context_array works IF both arrays were created
         # with the same make_ui from tagging.py and same context_attributes from const.py
-        df1 = get_col_filtered_df(self.context_array,columns)
-        df2 = get_col_filtered_df(other.context_array,columns)
+        df1 = get_col_filtered_df(self.context_array,columns).reset_index(drop=True)
+        df2 = get_col_filtered_df(other.context_array,columns).reset_index(drop=True)
         print(df1.equals(df2))
         return df1.equals(df2)
     
