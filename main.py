@@ -26,7 +26,7 @@ if __name__ == "__main__":
         epilog      = """For more information see source code comments."""
     )
     args = parser.parse_args()
-
+    # This is a not so relevant change
 
     print("*************************")
     print("New execution started \n")
