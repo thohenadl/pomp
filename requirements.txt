@@ -1,3 +1,3 @@
-tinker
+thinker
 pandas
 pm4py
