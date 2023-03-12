@@ -130,7 +130,7 @@ class MyGUI:
         extension = os.path.splitext(filename)[1]
 
         if extension == ".csv":
-            self.arr.to_csv(filename, index = False)
+            self.arr.to_csv(filename, encoding="latin-1", index = False)
         elif extension == ".xml":
             self.arr.to_xml(filename)
         

@@ -27,7 +27,7 @@ def prepare_log(log_name: str, version: int, seperator: str, parse_dates=False) 
         frame = log_converter.apply(log1, variant=log_converter.Variants.TO_DATA_FRAME)
         frame = frame.reset_index()
     else:
-        frame = pd.read_csv(path_to_files + "/" + directory + "/" + log_name, sep=seperator, quotechar='"', engine="python", error_bad_lines=False, parse_dates=parse_dates)
+        frame = pd.read_csv(path_to_files + "/" + directory + "/" + log_name, sep=seperator, quotechar='"', engine="python", encoding="latin-1", error_bad_lines=False, parse_dates=parse_dates)
     return frame
 
 def load_and_convert_to_log(path, case, timestamp, sep):
