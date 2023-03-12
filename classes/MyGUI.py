@@ -1,4 +1,5 @@
 import tkinter as tk
+import os
 import numpy as np
 import pandas as pd
 
@@ -13,7 +14,26 @@ class MyGUI:
         self.master.title("POMP")
         self.result = None
         self.currentLine = 0
-
+        self.root.config(bg = "#F1F2F2")
+        self.style = ttk.Style()
+        self.style.configure(
+            "AccentButton", 
+            foreground = "#F1F2F2", 
+            background = "#2B2D42", 
+            font       = ("Arial", 12, "bold"), 
+            padding    = 10,
+        )
+        self.style.map(
+            "AccentButton", 
+            foreground = [
+                ("pressed", "#F1F2F2"), 
+                ("active", "#F1F2F2")
+            ], 
+            background = [
+                ("pressed", "#3F3F3F"), 
+                ("active", "#3F3F3F")
+            ]
+        )
         self.create_file_dropdown()
     
     def create_file_dropdown(self):
@@ -63,25 +83,18 @@ class MyGUI:
             side = tk.LEFT, 
             padx = 10
         )
+        dropdown.current(0)
 
         # Create a "Load" button that doesn't perform any action
-        button_frame = tk.Frame(self.root, bg = "#f2f2f2")
-        button_frame.pack(
-            padx = 10, 
-            pady = 10, 
-            fill = tk.X
-        )
-
-        tk.Button(
-            master  = button_frame, 
+        ttk.Button(
+            master  = self.root, 
             text    = "Load", 
-            font    = ("Arial", 12),
-            bg      = "#303030",
-            fg      = "#f2f2f2",
-            padx    = 10,
-            pady    = 10,
-            command = lambda: self.create_widgets(dropdown.get())
-        ).pack(side = tk.RIGHT)
+            command = lambda: self.create_widgets(dropdown.get()),
+            # style   = "AccentButton",
+        ).pack(
+            side = tk.LEFT, 
+            pady = (0, 30)
+        )
 
         # Add some padding at the bottom of the window
         tk.Frame(
@@ -122,9 +135,9 @@ class MyGUI:
 
             # Unsupported file type
             tk.Label(
-                master     = self.master, 
-                text       = errorText,
-                foreground = "#FF0000"
+                master = self.master, 
+                text   = errorText,
+                fg     = "#FF0000"
             ).pack()
             return
         
@@ -134,33 +147,53 @@ class MyGUI:
         self.currentLine = 0
         self.clear_window()
 
-        # Create a Text widget to display the CSV file
-        text = tk.Text(self.root)
-        text.insert(tk.END, self.arr.iloc[self.currentLine])
-        text.pack()
+        self.widget_current_line_text()
+        self.widget_action_dropdown()
+        self.widget_action_dropdown(filename)
 
-        # Create a dropdown widget with the list of actions
-        self.dropdown = ttk.Combobox(
-            master = self.master, 
-            values = action_Dimensions
+    def widget_current_line_text(self):
+        text = tk.Text(
+            self.root,
+            bg     = "#ECF0F1",
+            fg     = "#34495E",
         )
-        self.dropdown.pack()
+        text.insert(tk.END, self.arr.iloc[self.currentLine])
+        text.grid(column = 1, row = 1, columnspan = 20, rowspan = 3)
 
-        # Add a submit button to the GUI
-        self.submit_button = tk.Button(
+    def widget_action_dropdown(self):
+        tk.Label(
+            master = self.master, 
+            text   = "Select action:",
+            font   = ("Arial", 12),
+            fg     = "#303030",
+            bg     = "#f2f2f2",
+            padx   = 10,
+            pady   = 10,
+        ).grid(column = 21, row = 1)
+        self.dropdown = ttk.Combobox(
+            master  = self.master, 
+            values  = action_Dimensions,
+            font    = ("Arial", 12),
+            state   = "readonly",
+            justify = "center",
+            width   = 30
+        )
+        self.dropdown.grid(column = 21, row = 3)
+    
+    def widget_action_buttons(self, filename):
+        ttk.Button(
             master  = self.master, 
             text    = "Submit & go to next line", 
-            command = lambda: self.print_input(self.dropdown.get())
-        )
-        self.submit_button.pack()
+            command = lambda: self.print_input(self.dropdown.get()),
+            # style   = "AccentButton",
+        ).grid(column = 22, row = 1)
 
-        # Add a finish button to the GUI
-        self.finish_button = tk.Button(
+        ttk.Button(
             master  = self.master, 
             text    = "Finish & Override file", 
-            command = lambda: self.finish_input(filename)
-        )
-        self.finish_button.pack()
+            command = lambda: self.finish_input(filename),
+            # style   = "AccentButton",
+        ).grid(column = 22, row = 3)
 
     def get_input(self):
         name = self.entry.get()
@@ -169,7 +202,6 @@ class MyGUI:
     def run(self):
         self.master.mainloop()
 
-    # Define a function to print the selected action
     def print_input(self, action):
         print("Selected Action: ", action)
 
