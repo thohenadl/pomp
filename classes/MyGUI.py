@@ -76,12 +76,11 @@ class MyGUI:
             label.pack()
             return
         
-        if "pomp_dim" in self.arr.columns:
+        if "pomp_dim" not in self.arr.columns:
             self.arr["pomp_dim"] = ""
+        
         self.currentLine = 0
         self.clear_window()
-        
-        print(self.arr.iloc[self.currentLine])
 
         # Create a Text widget to display the CSV file
         text = tk.Text(self.root)
@@ -106,7 +105,7 @@ class MyGUI:
         # Add a finish button to the GUI
         self.finish_button = tk.Button(
             master  = self.master, 
-            text    = "Finish", 
+            text    = "Finish & Override file", 
             command = lambda: self.finish_input(filename)
         )
         self.finish_button.pack()
@@ -123,10 +122,16 @@ class MyGUI:
         print("Selected Action: ", action)
 
         if action in action_Dimensions:
-            self.arr.iloc[self.currentLine][self.arr.columns.get_loc("pomp_dim")] = action
-            print(self.arr.iloc[self.currentLine]["pomp_dim"])
+            self.arr.loc[self.currentLine, "pomp_dim"] = action
+        print(self.arr.iloc[self.currentLine])
         self.currentLine += 1
 
     def finish_input(self, filename):
-        # @TODO: write csv / xml back in file (with changes)
+        extension = os.path.splitext(filename)[1]
+
+        if extension == ".csv":
+            self.arr.to_csv(filename, index = False)
+        elif extension == ".xml":
+            self.arr.to_xml(filename)
+        
         self.master.quit()
