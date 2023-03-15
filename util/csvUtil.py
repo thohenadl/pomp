@@ -45,6 +45,34 @@ def read_csv(path, sep):
     log_csv = dataframe_utils.convert_timestamp_columns_in_df(log_csv)
     return log_csv
 
+def store_log(df: pd.DataFrame, path: str, filename: str):
+    """
+    Stores a pandas DataFrame as a CSV or XML file at the specified location.
+
+    Parameters:
+    df (pandas.DataFrame): The DataFrame to be stored.
+    path (str): The path to the directory where the file should be stored.
+    filename (str): The name of the file to be stored, including the file extension (e.g. "data.csv").
+
+    Returns:
+    None.
+
+    Raises:
+    ValueError: If the file extension is not ".csv" or ".xml".
+
+    Example:
+    To store a DataFrame called "df" as a CSV file called "data.csv" in the "logs" directory
+    of the current working directory:
+    >>> store_log(df, "logs", "data.csv")
+    """
+    extension = os.path.splitext(filename)[1]
+    if extension == ".csv":
+        df.to_csv(os.path.join(path, filename), encoding="utf-8", index=False)
+    elif extension == ".xml":
+        df.to_xml(os.path.join(path, filename))
+    else:
+        raise ValueError("Unsupported file extension: {}".format(extension))
+
 
 def load_and_convert_to_df(log):
     return log_converter.apply(log, variant=log_converter.Variants.TO_DATA_FRAME)

@@ -124,13 +124,16 @@ def tag_UI_w_POMP(tagged_filename: str):
                 # ToDo: Compare Method always returns false at the moment
                 match = next((x for x in tagged_ui_set if x.compare_columns(userInteraction,context_attributes)), None)
                 if match is None: 
-                    print("Has no match in labeled: " + str(userInteraction))
+                    # print("Has no match in labeled: " + str(userInteraction))
                     untagged_ui.add(userInteraction)
                 else:
                     newly_tagged.add(userInteraction)
                     # ToDo does return none at the moment
-                    print("Pomp Dim is " + match.get_attribute("pompDim"))
+                    # print("Pomp Dim is " + match.get_attribute("pompDim"))
+                    df_file.loc[index,'pomp_dim'] = match.get_attribute("pompDim")
                 print("********** Index: " + str(index) + " ************")
+            print(df_file)
+            # To Do: Store df_file
     
     print(len(untagged_ui))
     print(len(newly_tagged))

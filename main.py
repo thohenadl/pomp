@@ -25,14 +25,14 @@ if __name__ == "__main__":
         description = '''Tool for tagging an user interaction log with POMP categories''',
         epilog      = """For more information see source code comments."""
     )
-    parser.add_argument('filename')   
+    # parser.add_argument('filename')   
     args = parser.parse_args()
 
     print("*************************")
     print("New execution started \n")
 
     # ToDo: Create UI To generate POMP Tagged File into Folder pomp_tagged_dir from const.py
-    # showGui()
+    showGui()
 
     # Tagges a single file with the POMP tags from the POMP Tagged folder file
     # Hard Coded for now

@@ -5,6 +5,7 @@ import pandas as pd
 
 from tkinter import ttk
 from const import *
+from util.csvUtil import store_log
 
 class MyGUI:
     def __init__(self):
@@ -53,7 +54,7 @@ class MyGUI:
         )
 
         # Get a list of all XML and JSON files in the "logs/uilogs/" directory
-        file_list = [f for f in os.listdir(path_to_files + "/" + log_dir + "/") if f.endswith(".xml") or f.endswith(".csv")]
+        file_list = [f for f in os.listdir(path_to_files + "/" + pomp_tagged_dir + "/") if f.endswith(".xml") or f.endswith(".csv")]
 
         # Create a dropdown with the file names
         dropdown_frame = tk.Frame(self.root, bg = "#f2f2f2")
@@ -114,14 +115,14 @@ class MyGUI:
         # Create a 2D numpy array
         if extension == ".csv":
             self.arr = pd.read_csv(
-                path_to_files + "/" + log_dir + "/" + filename, 
+                path_to_files + "/" + pomp_tagged_dir + "/" + filename, 
                 sep             = ";", 
                 quotechar       = '"', 
                 engine          = "python",
                 error_bad_lines = False
             )
         elif extension == ".xml":
-            self.arr = pd.read_xml(path_to_files + "/" + log_dir + "/" + filename)
+            self.arr = pd.read_xml(path_to_files + "/" + pomp_tagged_dir + "/" + filename)
         else:
             # Destroy any existing error labels
             for widget in self.master.winfo_children():
@@ -215,12 +216,7 @@ class MyGUI:
         self.currentLine += 1
 
     def finish_input(self, filename):
-        extension = os.path.splitext(filename)[1]
-
-        if extension == ".csv":
-            self.arr.to_csv(filename, encoding="latin-1", index = False)
-            self.arr.to_csv(path_to_files + "/" + log_dir + "/" + filename, index = False)
-        elif extension == ".xml":
-            self.arr.to_xml(path_to_files + "/" + log_dir + "/" + filename)
+        path = path_to_files + "/" + pomp_tagged_dir + "/"
+        store_log(self.arr,path,filename)
         
         self.master.quit()

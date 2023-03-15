@@ -93,7 +93,6 @@ class userInteraction:
         # with the same make_ui from tagging.py and same context_attributes from const.py
         df1 = get_col_filtered_df(self.context_array,columns).reset_index(drop=True)
         df2 = get_col_filtered_df(other.context_array,columns).reset_index(drop=True)
-        print(df1.equals(df2))
         return df1.equals(df2)
     
     def __hash__(self):
