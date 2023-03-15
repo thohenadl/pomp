@@ -65,6 +65,8 @@ def store_log(df: pd.DataFrame, path: str, filename: str):
     of the current working directory:
     >>> store_log(df, "logs", "data.csv")
     """
+    # Issue #9: https://github.com/thohenadl/pomp/issues/9
+    # Sotring does add special characters into CSV File
     extension = os.path.splitext(filename)[1]
     if extension == ".csv":
         df.to_csv(os.path.join(path, filename), encoding="utf-8", index=False, sep=seperator)
