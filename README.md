@@ -24,9 +24,22 @@ List of required libraries or dependencies
 Any other information needed to run the project
 
 ## How to Use
+### Preliminary Work
 Clone the repository.
-Install the required dependencies.
-Run the script or start the application.
+Install the required dependencies
+
+'pip install -r requirements.txt'
+
+### File Preperation
+1. Set file to be tagged with POMP categories:
+    * Go to folder "logs > pompTagged"
+    * Add your file without a column for the "pomp_dim"
+2. Store files that should be tagged
+    * Go to folder "logs > uilogs"
+    * Place all files that should be tagged based on the file in 1.
+
+### Execution
+Run the script or start the application with 'python main.py'
 Detailed instructions on how to use the project (if necessary).
 
 ## Examples
@@ -36,4 +49,4 @@ Show some examples of the project in action.
 Guidelines on how to contribute to the project.
 
 ## License
-plese refer to LICENSE file.
+Please refer to LICENSE file.
