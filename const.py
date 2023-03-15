@@ -1,6 +1,7 @@
 import os
 
 dirname = os.path.dirname(__file__)
+seperator = ";"
 
 path_to_files = os.path.join(dirname, 'logs')
 log_dir = 'uilogs'

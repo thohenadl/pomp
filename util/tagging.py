@@ -6,7 +6,7 @@ import classes.userInteraction
 
 # Import Util
 from util.csvUtil import *
-from const import TERMS_FOR_MISSING
+from const import *
 import classes.userInteraction as ui
 
 # Import necessary libaries
@@ -80,7 +80,7 @@ def tag_UI_w_POMP(tagged_filename: str):
     """
     # (1) Read tagged actions & clean for context only
     tagged_file = find_file(tagged_filename, path_to_files + "\\" +  pomp_tagged_dir)
-    df_tagged_log = prepare_log(tagged_file,0,";")
+    df_tagged_log = prepare_log(tagged_file,0,seperator)
     
     # (2) Get all columns that are not specified in the context constant
     context_attributes = context_attributes_smartRPA + context_attributes_ActionLogger
@@ -106,7 +106,7 @@ def tag_UI_w_POMP(tagged_filename: str):
         # Iterate over files in folder that should be tagged
         for filename in filenames:
             # Prepare File
-            df_file = prepare_log(filename,1,";")
+            df_file = prepare_log(filename,1,seperator)
             # Filter on context attributes
             df_context_file = get_col_filtered_df(df_file,context_attributes)
             lenth_file = len(df_context_file)
