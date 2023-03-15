@@ -6,6 +6,7 @@ import pandas as pd
 from tkinter import ttk
 from const import *
 from util.csvUtil import store_log
+from util.tagging import tag_UI_w_POMP
 
 class MyGUI:
     def __init__(self):
@@ -219,4 +220,7 @@ class MyGUI:
         path = path_to_files + "/" + pomp_tagged_dir + "/"
         store_log(self.arr,path,filename)
         
+        # Running Tagging Method
+        tag_UI_w_POMP(filename)
+
         self.master.quit()

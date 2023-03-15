@@ -11,8 +11,7 @@ from classes.MyGUI import MyGUI
 import classes.userInteraction as ui
 
 from util.csvUtil import log_converter, find_file, prepare_log
-from const import *
-from util.tagging import *
+
 warnings.simplefilter('ignore')
 
 
@@ -36,7 +35,7 @@ if __name__ == "__main__":
 
     # Tagges a single file with the POMP tags from the POMP Tagged folder file
     # Hard Coded for now
-    tagged_file = "pompTagged"
-    tag_UI_w_POMP(tagged_file)
+    # tagged_file = "pompTagged"
+    # tag_UI_w_POMP(tagged_file)
 
       
