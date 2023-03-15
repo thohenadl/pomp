@@ -2,11 +2,12 @@
 from const import action_Dimensions, context_attributes_ActionLogger, context_attributes_smartRPA
 
 # Import Classes
-import classes.userInteraction
+import classes.userInteraction as ui
 
 # Import Util
 from util.csvUtil import *
 from const import *
+from util.filtering import get_col_filtered_df
 
 # Import necessary libaries
 import pandas as pd
@@ -111,9 +112,12 @@ def tag_UI_w_POMP(tagged_filename: str):
                     newly_tagged.add(userInteraction)
                     # ToDo does return none at the moment
                     # print("Pomp Dim is " + match.get_attribute("pompDim"))
+                    print("why")
                     df_file.loc[index,'pomp_dim'] = match.get_attribute("pompDim")
                 print("********** Index: " + str(index) + " ************")
             print(df_file)
+            filepath = path_to_files + "/" + log_dir
+            store_log(df_file,filepath,filename)
             # To Do: Store df_file
     
     print(len(untagged_ui))

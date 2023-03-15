@@ -94,7 +94,7 @@ def find_file(filename: str, folder_path: str) -> str:
 
     # Loop over the file list and check each file name
     for file in file_list:
-        if os.path.splitext(file)[0] == filename:
+        if file == filename:
             # If the file is found, return the full path
             return file
 
