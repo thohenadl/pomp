@@ -1,11 +1,12 @@
 import tkinter as tk
 import os
-import numpy as np
 import pandas as pd
+import time
 
 from tkinter import ttk
 from const import *
 from util.csvUtil import store_log
+from util.tagging import tag_UI_w_POMP
 
 class MyGUI:
     def __init__(self):
@@ -162,7 +163,12 @@ class MyGUI:
             bg     = "#ECF0F1",
             fg     = "#34495E",
         )
-        text.insert(tk.END, self.arr.iloc[self.currentLine])
+        if self.currentLine < len(self.arr):
+            text.insert(tk.END, self.arr.iloc[self.currentLine])
+        else:
+            text.insert(tk.END, "All rows in selcted file have been tagged.")
+            # Solves issue #12 https://github.com/thohenadl/pomp/issues/12
+            self.set_tag_button_state("disabled")
         text.grid(column = 0, row = 0, columnspan = 3, sticky='nsew')
 
     def widget_action_dropdown(self):
@@ -186,19 +192,45 @@ class MyGUI:
         self.dropdown.grid(column = 1, row = 1, columnspan = 3, sticky='nsew')
     
     def widget_action_buttons(self, filename):
-        ttk.Button(
+        self.button_tag = ttk.Button(
             master  = self.master, 
             text    = "Submit & go to next line", 
-            command = lambda: self.print_input(self.dropdown.get()),
+            command = lambda: (
+                self.print_input(self.dropdown.get()),
+                # Solves Issue #11 - https://github.com/thohenadl/pomp/issues/11
+                self.widget_current_line_text()
+            ),
             # style   = "AccentButton",
-        ).grid(column = 1, row = 2, sticky='nsew')
+            )
+        self.button_tag.grid(column = 1, row = 2, sticky='nsew')
 
-        ttk.Button(
+        self.button_finish = ttk.Button(
             master  = self.master, 
             text    = "Finish & Override file", 
             command = lambda: self.finish_input(filename),
             # style   = "AccentButton",
-        ).grid(column = 2, row = 2, sticky='nsew')
+            )
+        self.button_finish.grid(column = 2, row = 2, sticky='nsew')
+
+    def set_tag_button_state(self, state: str):
+        """
+        Method to disable the "Set Tag/Next Line" Button
+
+        Args:
+            state (str): "normal" for active and "disabled" for inactive state
+
+        Returns:
+            -
+
+        Raises:
+            NameError, if button does not exist
+        """
+        # Solves issue #12 https://github.com/thohenadl/pomp/issues/12
+        if (self.button_tag):
+            self.button_tag['state'] = state
+        else:
+            raise NameError("No such Button - Cannot change state of button in GUI")
+            
 
     def get_input(self):
         name = self.entry.get()
@@ -219,4 +251,11 @@ class MyGUI:
         path = path_to_files + "/" + pomp_tagged_dir + "/"
         store_log(self.arr,path,filename)
         
+        # Running Tagging Method
+        start_time = time.time()
+        print("Tagging Log: Start at " + str(start_time))
+        tag_UI_w_POMP(filename)
+        end_time = time.time()
+        print("Tagging Log: Complete at " + str(end_time))
+
         self.master.quit()

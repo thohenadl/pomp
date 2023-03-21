@@ -2,33 +2,15 @@
 from const import action_Dimensions, context_attributes_ActionLogger, context_attributes_smartRPA
 
 # Import Classes
-import classes.userInteraction
+import classes.userInteraction as ui
 
 # Import Util
 from util.csvUtil import *
-from const import TERMS_FOR_MISSING
-import classes.userInteraction as ui
+from const import *
+from util.filtering import get_col_filtered_df
 
 # Import necessary libaries
 import pandas as pd
-
-def get_col_filtered_df(log: pd.DataFrame, context_attributes: list) -> pd.DataFrame:
-    """
-    Remove context attributes from Datafrae
-
-    Args:
-        log (DataFrame): DataFrame that should be cleaned
-        context_attributes (List): String List of column names to be kept
-
-    Returns:
-        df_stripped (DataFrame): Returns DataFrame with columns specified 
-    
-    """
-    # Fixes Drop was tested, did not work due to "not in list error"
-    # https://github.com/thohenadl/pomp/issues/1
-    new_col_list = [col for col in context_attributes if col in log.columns]
-    df_stripped = log[new_col_list]
-    return df_stripped
 
 def generate_unique_UI_set(log: pd.DataFrame) -> set:
     """
@@ -80,7 +62,7 @@ def tag_UI_w_POMP(tagged_filename: str):
     """
     # (1) Read tagged actions & clean for context only
     tagged_file = find_file(tagged_filename, path_to_files + "\\" +  pomp_tagged_dir)
-    df_tagged_log = prepare_log(tagged_file,0,";")
+    df_tagged_log = prepare_log(tagged_file,0,seperator)
     
     # (2) Get all columns that are not specified in the context constant
     context_attributes = context_attributes_smartRPA + context_attributes_ActionLogger
@@ -106,7 +88,7 @@ def tag_UI_w_POMP(tagged_filename: str):
         # Iterate over files in folder that should be tagged
         for filename in filenames:
             # Prepare File
-            df_file = prepare_log(filename,1,";")
+            df_file = prepare_log(filename,1,seperator)
             # Filter on context attributes
             df_context_file = get_col_filtered_df(df_file,context_attributes)
             lenth_file = len(df_context_file)
@@ -133,6 +115,8 @@ def tag_UI_w_POMP(tagged_filename: str):
                     df_file.loc[index,'pomp_dim'] = match.get_attribute("pompDim")
                 print("********** Index: " + str(index) + " ************")
             print(df_file)
+            filepath = path_to_files + "/" + log_dir
+            store_log(df_file,filepath,filename)
             # To Do: Store df_file
     
     print(len(untagged_ui))

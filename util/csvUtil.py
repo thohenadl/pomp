@@ -6,7 +6,7 @@ from pm4py.objects.log.importer.xes import importer as xes_importer
 
 from const import *
 
-def prepare_log(log_name: str, version: int, seperator: str, parse_dates=False) -> pd.DataFrame:
+def prepare_log(log_name: str, version: int, seper: str, parse_dates=False) -> pd.DataFrame:
     """
     Prepares a log file and converts .xes or .csv into a Pandas Dataframe
 
@@ -27,7 +27,7 @@ def prepare_log(log_name: str, version: int, seperator: str, parse_dates=False) 
         frame = log_converter.apply(log1, variant=log_converter.Variants.TO_DATA_FRAME)
         frame = frame.reset_index()
     else:
-        frame = pd.read_csv(path_to_files + "/" + directory + "/" + log_name, sep=seperator, quotechar='"',encoding="latin-1", engine="python", error_bad_lines=False, parse_dates=parse_dates)
+        frame = pd.read_csv(path_to_files + "/" + directory + "/" + log_name, sep=seper, quotechar='"',encoding="latin-1", engine="python", error_bad_lines=False, parse_dates=parse_dates)
     return frame
 
 def load_and_convert_to_log(path, case, timestamp, sep):
@@ -65,9 +65,11 @@ def store_log(df: pd.DataFrame, path: str, filename: str):
     of the current working directory:
     >>> store_log(df, "logs", "data.csv")
     """
+    # Issue #9: https://github.com/thohenadl/pomp/issues/9
+    # Sotring does add special characters into CSV File
     extension = os.path.splitext(filename)[1]
     if extension == ".csv":
-        df.to_csv(os.path.join(path, filename), encoding="utf-8", index=False)
+        df.to_csv(os.path.join(path, filename), encoding="utf-8", index=False, sep=seperator)
     elif extension == ".xml":
         df.to_xml(os.path.join(path, filename))
     else:
@@ -94,7 +96,7 @@ def find_file(filename: str, folder_path: str) -> str:
 
     # Loop over the file list and check each file name
     for file in file_list:
-        if os.path.splitext(file)[0] == filename:
+        if file == filename:
             # If the file is found, return the full path
             return file
 

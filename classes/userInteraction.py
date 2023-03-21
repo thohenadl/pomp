@@ -3,7 +3,7 @@ import pandas as pd
 from const import action_Dimensions
 
 from const import TERMS_FOR_MISSING, context_attributes_ActionLogger, context_attributes_smartRPA
-from util.tagging import get_col_filtered_df
+from util.filtering import get_col_filtered_df
 
 class userInteraction:
     """
