@@ -10,6 +10,7 @@ from util.tagging import tag_UI_w_POMP
 
 class MyGUI:
     def __init__(self):
+        self.hideNAN_state = False
         self.root = tk.Tk()
         self.root.geometry("1250x500")
         self.master = self.root
@@ -158,17 +159,29 @@ class MyGUI:
         self.widget_action_buttons(filename)
 
     def widget_current_line_text(self):
+        """
+        Function does display the current line of the UI log
+
+        Args:
+            state (bool): True if NAN values should be removed
+
+        Returns:
+            -
+        """
         text = tk.Text(
             self.root,
             bg     = "#ECF0F1",
             fg     = "#34495E",
         )
         if self.currentLine < len(self.arr):
-            text.insert(tk.END, self.arr.iloc[self.currentLine])
+            if self.hideNAN_state:
+                text.insert(tk.END, self.arr.iloc[self.currentLine].dropna())
+            else:
+                text.insert(tk.END, self.arr.iloc[self.currentLine])
         else:
             text.insert(tk.END, "All rows in selcted file have been tagged.")
             # Solves issue #12 https://github.com/thohenadl/pomp/issues/12
-            self.set_tag_button_state("disabled")
+            self.set_button_state(self.button_tag,"disabled")
         text.grid(column = 0, row = 0, columnspan = 3, sticky='nsew')
 
     def widget_action_dropdown(self):
@@ -200,8 +213,8 @@ class MyGUI:
                 # Solves Issue #11 - https://github.com/thohenadl/pomp/issues/11
                 self.widget_current_line_text()
             ),
-            # style   = "AccentButton",
-            )
+        # style   = "AccentButton",
+        )
         self.button_tag.grid(column = 1, row = 2, sticky='nsew')
 
         self.button_finish = ttk.Button(
@@ -212,13 +225,33 @@ class MyGUI:
             )
         self.button_finish.grid(column = 2, row = 2, sticky='nsew')
 
-    def set_tag_button_state(self, state: str):
+        self.button_hideNAN = ttk.Button(
+            master = self.master,
+            text = "Hide NAN Values",
+            command = lambda: (
+                self.change_HideNAN_state(),
+                self.widget_current_line_text()
+            )
+        # style   = "AccentButton",
+        )
+        self.button_hideNAN.grid(column = 3, row = 2, sticky='nsew')
+
+    def change_HideNAN_state(self):
+        # Solves issue #14 - https://github.com/thohenadl/pomp/issues/14
+        if self.hideNAN_state:
+            self.hideNAN_state = False
+            self.button_hideNAN['text'] = "Hide NAN Values"
+        else:
+            self.hideNAN_state = True
+            self.button_hideNAN['text'] = "Show NAN Values"
+
+    def set_button_state(self, button: object, state: str):
         """
         Method to disable the "Set Tag/Next Line" Button
 
         Args:
             state (str): "normal" for active and "disabled" for inactive state
-
+            button (object): Hand over the button that should be disabled
         Returns:
             -
 
@@ -226,8 +259,8 @@ class MyGUI:
             NameError, if button does not exist
         """
         # Solves issue #12 https://github.com/thohenadl/pomp/issues/12
-        if (self.button_tag):
-            self.button_tag['state'] = state
+        if (button):
+            button['state'] = state
         else:
             raise NameError("No such Button - Cannot change state of button in GUI")
             
