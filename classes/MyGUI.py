@@ -2,6 +2,7 @@ import tkinter as tk
 import os
 import numpy as np
 import pandas as pd
+import time
 
 from tkinter import ttk
 from const import *
@@ -190,7 +191,10 @@ class MyGUI:
         ttk.Button(
             master  = self.master, 
             text    = "Submit & go to next line", 
-            command = lambda: self.print_input(self.dropdown.get()),
+            command = lambda: (
+                self.print_input(self.dropdown.get()),
+                self.widget_current_line_text()
+            ),
             # style   = "AccentButton",
         ).grid(column = 1, row = 2, sticky='nsew')
 
@@ -221,6 +225,10 @@ class MyGUI:
         store_log(self.arr,path,filename)
         
         # Running Tagging Method
+        start_time = time.time()
+        print("Tagging Log: Start at " + str(start_time))
         tag_UI_w_POMP(filename)
+        end_time = time.time()
+        print("Tagging Log: Complete at " + str(end_time))
 
         self.master.quit()

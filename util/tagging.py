@@ -112,7 +112,6 @@ def tag_UI_w_POMP(tagged_filename: str):
                     newly_tagged.add(userInteraction)
                     # ToDo does return none at the moment
                     # print("Pomp Dim is " + match.get_attribute("pompDim"))
-                    print("why")
                     df_file.loc[index,'pomp_dim'] = match.get_attribute("pompDim")
                 print("********** Index: " + str(index) + " ************")
             print(df_file)
