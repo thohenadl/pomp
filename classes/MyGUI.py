@@ -1,6 +1,5 @@
 import tkinter as tk
 import os
-import numpy as np
 import pandas as pd
 import time
 
@@ -164,7 +163,12 @@ class MyGUI:
             bg     = "#ECF0F1",
             fg     = "#34495E",
         )
-        text.insert(tk.END, self.arr.iloc[self.currentLine])
+        if self.currentLine < len(self.arr):
+            text.insert(tk.END, self.arr.iloc[self.currentLine])
+        else:
+            text.insert(tk.END, "All rows in selcted file have been tagged.")
+            # Solves issue #12 https://github.com/thohenadl/pomp/issues/12
+            self.set_tag_button_state("disabled")
         text.grid(column = 0, row = 0, columnspan = 3, sticky='nsew')
 
     def widget_action_dropdown(self):
@@ -188,22 +192,45 @@ class MyGUI:
         self.dropdown.grid(column = 1, row = 1, columnspan = 3, sticky='nsew')
     
     def widget_action_buttons(self, filename):
-        ttk.Button(
+        self.button_tag = ttk.Button(
             master  = self.master, 
             text    = "Submit & go to next line", 
             command = lambda: (
                 self.print_input(self.dropdown.get()),
+                # Solves Issue #11 - https://github.com/thohenadl/pomp/issues/11
                 self.widget_current_line_text()
             ),
             # style   = "AccentButton",
-        ).grid(column = 1, row = 2, sticky='nsew')
+            )
+        self.button_tag.grid(column = 1, row = 2, sticky='nsew')
 
-        ttk.Button(
+        self.button_finish = ttk.Button(
             master  = self.master, 
             text    = "Finish & Override file", 
             command = lambda: self.finish_input(filename),
             # style   = "AccentButton",
-        ).grid(column = 2, row = 2, sticky='nsew')
+            )
+        self.button_finish.grid(column = 2, row = 2, sticky='nsew')
+
+    def set_tag_button_state(self, state: str):
+        """
+        Method to disable the "Set Tag/Next Line" Button
+
+        Args:
+            state (str): "normal" for active and "disabled" for inactive state
+
+        Returns:
+            -
+
+        Raises:
+            NameError, if button does not exist
+        """
+        # Solves issue #12 https://github.com/thohenadl/pomp/issues/12
+        if (self.button_tag):
+            self.button_tag['state'] = state
+        else:
+            raise NameError("No such Button - Cannot change state of button in GUI")
+            
 
     def get_input(self):
         name = self.entry.get()
