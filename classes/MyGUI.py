@@ -168,7 +168,7 @@ class MyGUI:
         else:
             text.insert(tk.END, "All rows in selcted file have been tagged.")
             # Solves issue #12 https://github.com/thohenadl/pomp/issues/12
-            self.set_tag_button_state("disabled")
+            self.set_button_state(self.button_tag,"disabled")
         text.grid(column = 0, row = 0, columnspan = 3, sticky='nsew')
 
     def widget_action_dropdown(self):
@@ -200,8 +200,8 @@ class MyGUI:
                 # Solves Issue #11 - https://github.com/thohenadl/pomp/issues/11
                 self.widget_current_line_text()
             ),
-            # style   = "AccentButton",
-            )
+        # style   = "AccentButton",
+        )
         self.button_tag.grid(column = 1, row = 2, sticky='nsew')
 
         self.button_finish = ttk.Button(
@@ -212,13 +212,27 @@ class MyGUI:
             )
         self.button_finish.grid(column = 2, row = 2, sticky='nsew')
 
-    def set_tag_button_state(self, state: str):
+    def hide_nan(self):
+        text = tk.Text(
+            self.root,
+            bg     = "#ECF0F1",
+            fg     = "#34495E",
+        )
+        if self.currentLine < len(self.arr):
+            text.insert(tk.END, self.arr.iloc[self.currentLine])
+        else:
+            text.insert(tk.END, "All rows in selcted file have been tagged.")
+            # Solves issue #12 https://github.com/thohenadl/pomp/issues/12
+            self.set_button_state(self.button_hideNAN,"disabled")
+        text.grid(column = 0, row = 0, columnspan = 3, sticky='nsew')
+
+    def set_button_state(self, button: object, state: str):
         """
         Method to disable the "Set Tag/Next Line" Button
 
         Args:
             state (str): "normal" for active and "disabled" for inactive state
-
+            button (object): Hand over the button that should be disabled
         Returns:
             -
 
@@ -226,8 +240,8 @@ class MyGUI:
             NameError, if button does not exist
         """
         # Solves issue #12 https://github.com/thohenadl/pomp/issues/12
-        if (self.button_tag):
-            self.button_tag['state'] = state
+        if (button):
+            button['state'] = state
         else:
             raise NameError("No such Button - Cannot change state of button in GUI")
             
