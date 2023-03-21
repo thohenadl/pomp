@@ -237,6 +237,7 @@ class MyGUI:
         self.button_hideNAN.grid(column = 3, row = 2, sticky='nsew')
 
     def change_HideNAN_state(self):
+        # Solves issue #14 - https://github.com/thohenadl/pomp/issues/14
         if self.hideNAN_state:
             self.hideNAN_state = False
             self.button_hideNAN['text'] = "Hide NAN Values"
