@@ -10,6 +10,7 @@ from util.tagging import tag_UI_w_POMP
 
 class MyGUI:
     def __init__(self):
+        self.hideNAN_state = False
         self.root = tk.Tk()
         self.root.geometry("1250x500")
         self.master = self.root
@@ -158,13 +159,25 @@ class MyGUI:
         self.widget_action_buttons(filename)
 
     def widget_current_line_text(self):
+        """
+        Function does display the current line of the UI log
+
+        Args:
+            state (bool): True if NAN values should be removed
+
+        Returns:
+            -
+        """
         text = tk.Text(
             self.root,
             bg     = "#ECF0F1",
             fg     = "#34495E",
         )
         if self.currentLine < len(self.arr):
-            text.insert(tk.END, self.arr.iloc[self.currentLine])
+            if self.hideNAN_state:
+                text.insert(tk.END, self.arr.iloc[self.currentLine].dropna())
+            else:
+                text.insert(tk.END, self.arr.iloc[self.currentLine])
         else:
             text.insert(tk.END, "All rows in selcted file have been tagged.")
             # Solves issue #12 https://github.com/thohenadl/pomp/issues/12
@@ -212,19 +225,24 @@ class MyGUI:
             )
         self.button_finish.grid(column = 2, row = 2, sticky='nsew')
 
-    def hide_nan(self):
-        text = tk.Text(
-            self.root,
-            bg     = "#ECF0F1",
-            fg     = "#34495E",
+        self.button_hideNAN = ttk.Button(
+            master = self.master,
+            text = "Hide NAN Values",
+            command = lambda: (
+                self.change_HideNAN_state(),
+                self.widget_current_line_text()
+            )
+        # style   = "AccentButton",
         )
-        if self.currentLine < len(self.arr):
-            text.insert(tk.END, self.arr.iloc[self.currentLine])
+        self.button_hideNAN.grid(column = 3, row = 2, sticky='nsew')
+
+    def change_HideNAN_state(self):
+        if self.hideNAN_state:
+            self.hideNAN_state = False
+            self.button_hideNAN['text'] = "Hide NAN Values"
         else:
-            text.insert(tk.END, "All rows in selcted file have been tagged.")
-            # Solves issue #12 https://github.com/thohenadl/pomp/issues/12
-            self.set_button_state(self.button_hideNAN,"disabled")
-        text.grid(column = 0, row = 0, columnspan = 3, sticky='nsew')
+            self.hideNAN_state = True
+            self.button_hideNAN['text'] = "Show NAN Values"
 
     def set_button_state(self, button: object, state: str):
         """
