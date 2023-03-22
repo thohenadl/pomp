@@ -11,6 +11,7 @@ from util.tagging import tag_UI_w_POMP
 class MyGUI:
     def __init__(self):
         self.hideNAN_state = False
+        self.contextValue_state = False
         self.root = tk.Tk()
         self.root.geometry("1250x500")
         self.master = self.root
@@ -175,8 +176,20 @@ class MyGUI:
             fg     = "#34495E",
         )
         if self.currentLine < len(self.arr):
-            if self.hideNAN_state:
+            contextAttributes = context_attributes_smartRPA + context_attributes_ActionLogger
+            if self.hideNAN_state & self.contextValue_state:
+                # If both marks are checked, show only context values that are not nan
+                all_cols = self.arr.columns.tolist()
+                matching_cols = [col for col in contextAttributes if col in all_cols]
+                text.insert(tk.END, self.arr[matching_cols].iloc[self.currentLine].dropna())
+            elif self.hideNAN_state and not self.contextValue_state:
+                # Shows all values that are not nan, including not context values
                 text.insert(tk.END, self.arr.iloc[self.currentLine].dropna())
+            elif not self.hideNAN_state and self.contextValue_state:
+                # Only shows context values, including nan context values
+                all_cols = self.arr.columns.tolist()
+                matching_cols = [col for col in contextAttributes if col in all_cols]
+                text.insert(tk.END, self.arr[matching_cols].iloc[self.currentLine])
             else:
                 text.insert(tk.END, self.arr.iloc[self.currentLine])
         else:
@@ -234,8 +247,19 @@ class MyGUI:
         else:
             self.hideNAN_state = True
 
+    def change_contextValues_state(self):
+        # Solves issue #14 - https://github.com/thohenadl/pomp/issues/14
+        if self.contextValue_state:
+            self.contextValue_state = False
+        else:
+            self.contextValue_state = True
+
     def toggle_hide_nan(self):
         self.change_HideNAN_state()
+        self.widget_current_line_text()
+
+    def toggle_context_values(self):
+        self.change_contextValues_state()
         self.widget_current_line_text()
 
     def add_menu(self):
@@ -244,6 +268,7 @@ class MyGUI:
         options = tk.Menu(menu, tearoff=False)
         menu.add_cascade(label="Options", menu=options)
         options.add_checkbutton(label="Hide NaN Values", command=self.toggle_hide_nan)
+        options.add_checkbutton(label="Context Values Only", command=self.toggle_context_values)
 
 
     def set_button_state(self, button: object, state: str):
