@@ -11,6 +11,7 @@ from util.tagging import tag_UI_w_POMP
 class MyGUI:
     def __init__(self):
         self.hideNAN_state = False
+        self.contextValue_state = False
         self.root = tk.Tk()
         self.root.geometry("1250x500")
         self.master = self.root
@@ -156,6 +157,7 @@ class MyGUI:
 
         self.widget_current_line_text()
         self.widget_action_dropdown()
+        self.add_menu()
         self.widget_action_buttons(filename)
 
     def widget_current_line_text(self):
@@ -174,8 +176,20 @@ class MyGUI:
             fg     = "#34495E",
         )
         if self.currentLine < len(self.arr):
-            if self.hideNAN_state:
+            contextAttributes = context_attributes_smartRPA + context_attributes_ActionLogger
+            if self.hideNAN_state & self.contextValue_state:
+                # If both marks are checked, show only context values that are not nan
+                all_cols = self.arr.columns.tolist()
+                matching_cols = [col for col in contextAttributes if col in all_cols]
+                text.insert(tk.END, self.arr[matching_cols].iloc[self.currentLine].dropna())
+            elif self.hideNAN_state and not self.contextValue_state:
+                # Shows all values that are not nan, including not context values
                 text.insert(tk.END, self.arr.iloc[self.currentLine].dropna())
+            elif not self.hideNAN_state and self.contextValue_state:
+                # Only shows context values, including nan context values
+                all_cols = self.arr.columns.tolist()
+                matching_cols = [col for col in contextAttributes if col in all_cols]
+                text.insert(tk.END, self.arr[matching_cols].iloc[self.currentLine])
             else:
                 text.insert(tk.END, self.arr.iloc[self.currentLine])
         else:
@@ -225,26 +239,37 @@ class MyGUI:
             )
         self.button_finish.grid(column = 2, row = 2, sticky='nsew')
 
-        self.button_hideNAN = ttk.Button(
-            master = self.master,
-            text = "Hide NAN Values",
-            command = lambda: (
-                self.change_HideNAN_state(),
-                self.widget_current_line_text()
-            )
-        # style   = "AccentButton",
-        )
-        self.button_hideNAN.grid(column = 3, row = 2, sticky='nsew')
 
     def change_HideNAN_state(self):
         # Solves issue #14 - https://github.com/thohenadl/pomp/issues/14
         if self.hideNAN_state:
             self.hideNAN_state = False
-            self.button_hideNAN['text'] = "Hide NAN Values"
         else:
             self.hideNAN_state = True
-            self.button_hideNAN['text'] = "Show NAN Values"
 
+    def change_contextValues_state(self):
+        # Solves issue #14 - https://github.com/thohenadl/pomp/issues/14
+        if self.contextValue_state:
+            self.contextValue_state = False
+        else:
+            self.contextValue_state = True
+
+    def toggle_hide_nan(self):
+        self.change_HideNAN_state()
+        self.widget_current_line_text()
+
+    def toggle_context_values(self):
+        self.change_contextValues_state()
+        self.widget_current_line_text()
+
+    def add_menu(self):
+        menu = tk.Menu(self.root)
+        self.root.config(menu=menu)
+        options = tk.Menu(menu, tearoff=False)
+        menu.add_cascade(label="Options", menu=options)
+        options.add_checkbutton(label="Hide NaN Values", command=self.toggle_hide_nan)
+        options.add_checkbutton(label="Context Values Only", command=self.toggle_context_values)
+        
     def set_button_state(self, button: object, state: str):
         """
         Method to disable the "Set Tag/Next Line" Button
