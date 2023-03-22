@@ -269,8 +269,7 @@ class MyGUI:
         menu.add_cascade(label="Options", menu=options)
         options.add_checkbutton(label="Hide NaN Values", command=self.toggle_hide_nan)
         options.add_checkbutton(label="Context Values Only", command=self.toggle_context_values)
-
-
+        
     def set_button_state(self, button: object, state: str):
         """
         Method to disable the "Set Tag/Next Line" Button
