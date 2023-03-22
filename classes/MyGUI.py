@@ -156,6 +156,7 @@ class MyGUI:
 
         self.widget_current_line_text()
         self.widget_action_dropdown()
+        self.add_menu()
         self.widget_action_buttons(filename)
 
     def widget_current_line_text(self):
@@ -225,25 +226,25 @@ class MyGUI:
             )
         self.button_finish.grid(column = 2, row = 2, sticky='nsew')
 
-        self.button_hideNAN = ttk.Button(
-            master = self.master,
-            text = "Hide NAN Values",
-            command = lambda: (
-                self.change_HideNAN_state(),
-                self.widget_current_line_text()
-            )
-        # style   = "AccentButton",
-        )
-        self.button_hideNAN.grid(column = 3, row = 2, sticky='nsew')
 
     def change_HideNAN_state(self):
         # Solves issue #14 - https://github.com/thohenadl/pomp/issues/14
         if self.hideNAN_state:
             self.hideNAN_state = False
-            self.button_hideNAN['text'] = "Hide NAN Values"
         else:
             self.hideNAN_state = True
-            self.button_hideNAN['text'] = "Show NAN Values"
+
+    def toggle_hide_nan(self):
+        self.change_HideNAN_state()
+        self.widget_current_line_text()
+
+    def add_menu(self):
+        menu = tk.Menu(self.root)
+        self.root.config(menu=menu)
+        options = tk.Menu(menu, tearoff=False)
+        menu.add_cascade(label="Options", menu=options)
+        options.add_checkbutton(label="Hide NaN Values", command=self.toggle_hide_nan)
+
 
     def set_button_state(self, button: object, state: str):
         """
