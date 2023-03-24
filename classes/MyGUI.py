@@ -199,6 +199,15 @@ class MyGUI:
         text.grid(column = 0, row = 0, columnspan = 3, sticky='nsew')
 
     def widget_action_dropdown(self):
+        """
+        Creates a dropdown widget that allows the user to select an action from a list of pre-defined options.
+        
+        Args:
+            None
+            
+        Returns:
+            None
+        """
         tk.Label(
             master = self.master, 
             text   = "Select action:",
@@ -218,7 +227,18 @@ class MyGUI:
         )
         self.dropdown.grid(column = 1, row = 1, columnspan = 3, sticky='nsew')
     
-    def widget_action_buttons(self, filename):
+    def widget_action_buttons(self, filename: str):
+        """
+        This function does create 3 buttons to tag the presented entry in the GUI.
+            1. Button: Tags the current line
+            2. Button: Does store the file and tagges all other files
+            3. Button: Does store the file and does not tag other files.
+
+        Args:
+            filename (str): Does take the filename as input
+
+        This function does not return any value.
+        """
         self.button_tag = ttk.Button(
             master  = self.master, 
             text    = "Submit & go to next line", 
