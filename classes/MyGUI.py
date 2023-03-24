@@ -233,11 +233,19 @@ class MyGUI:
 
         self.button_finish = ttk.Button(
             master  = self.master, 
-            text    = "Finish & Override file", 
-            command = lambda: self.finish_input(filename),
+            text    = "Finish and Tag Files", 
+            command = lambda: self.finish_and_tag_files(filename,True),
             # style   = "AccentButton",
             )
         self.button_finish.grid(column = 2, row = 2, sticky='nsew')
+
+        self.button_finish = ttk.Button(
+            master  = self.master, 
+            text    = "Finish (w/o Tagging Files)", 
+            command = lambda: self.finish_and_tag_files(filename,False),
+            # style   = "AccentButton",
+            )
+        self.button_finish.grid(column = 3, row = 2, sticky='nsew')
 
 
     def change_HideNAN_state(self):
@@ -263,13 +271,45 @@ class MyGUI:
         self.widget_current_line_text()
 
     def add_menu(self):
+        """
+        Adds a menu to the GUI with several buttons, such as "File" and "Options".
+
+        The "File" button has a dropdown menu with a single option to "Open File Selection",
+        which triggers the `reopen_file_dropdown` function when clicked.
+
+        The "Options" button has a dropdown menu with two options: "Hide NaN Values" and 
+        "Context Values Only", both of which trigger the `toggle_hide_nan` and 
+        `toggle_context_values` functions respectively when clicked.
+
+        This function does not return any value.
+        """
         menu = tk.Menu(self.root)
         self.root.config(menu=menu)
-        options = tk.Menu(menu, tearoff=False)
-        menu.add_cascade(label="Options", menu=options)
+        # Menu Buttons
+        file_menu = tk.Menu(menu, tearoff = False)
+        options = tk.Menu(menu, tearoff = False)
+        # Adding file_menu
+        menu.add_cascade(label = "File", menu = file_menu)
+        file_menu.add_command(label = "Open File Selection", command=self.reopen_file_dropdown)
+        # Adding Options Menu
+        menu.add_cascade(label="Options", menu = options)
         options.add_checkbutton(label="Hide NaN Values", command=self.toggle_hide_nan)
         options.add_checkbutton(label="Context Values Only", command=self.toggle_context_values)
         
+    def reopen_file_dropdown(self):
+        """
+        Function does take in the GUI, removes all GUI elements and opens
+            the file selction process again
+        
+        Args:
+            -
+            
+        Returns:
+            -
+        """
+        self.clear_gui()
+        self.create_file_dropdown()
+
     def set_button_state(self, button: object, state: str):
         """
         Method to disable the "Set Tag/Next Line" Button
@@ -290,30 +330,70 @@ class MyGUI:
             raise NameError("No such Button - Cannot change state of button in GUI")
             
 
-    def get_input(self):
-        name = self.entry.get()
-        print(f"Hello {name}!")
-
     def run(self):
         self.master.mainloop()
 
     def print_input(self, action):
         print("Selected Action: ", action)
-
         if action in action_Dimensions:
             self.arr.loc[self.currentLine, "pomp_dim"] = action
         
         self.currentLine += 1
 
-    def finish_input(self, filename):
+    def clear_gui(self):
+        for widget in self.root.winfo_children():
+            widget.destroy()
+
+    def finish_and_tag_files(self, filename: str, override: bool):
+        """
+        Finish and tag log files.
+
+        This function takes in a filename and an override flag. It stores the log file, then runs a tagging method
+        on the file if the override flag is True. The function will then print the start and end time of the tagging 
+        process and quit the GUI.
+
+        Args:
+            filename (str): The name of the file to tag.
+            override (bool): A flag indicating whether to override the existing file if it has already been tagged.
+
+        Returns:
+            None
+        """
         path = path_to_files + "/" + pomp_tagged_dir + "/"
         store_log(self.arr,path,filename)
         
         # Running Tagging Method
-        start_time = time.time()
-        print("Tagging Log: Start at " + str(start_time))
-        tag_UI_w_POMP(filename)
-        end_time = time.time()
-        print("Tagging Log: Complete at " + str(end_time))
+        if override:
+            start_time = time.time()
+            print("Tagging Log: Start at " + str(start_time))
+            tag_UI_w_POMP(filename)
+            end_time = time.time()
+            print("Tagging Log: Complete at " + str(end_time))
+        
+        self.show_popup()
 
-        self.master.quit()
+    def show_popup(self):
+        """
+        Create a popup window to show that the process has been completed.
+
+        Returns:
+            None
+
+        """
+        popup = tk.Toplevel(self.root)
+        popup.title("Process Completed")
+        popup.geometry("200x100")
+        
+        label = tk.Label(popup, text="Done!")
+        label.pack(padx=20, pady=20)
+        
+        button = tk.Button(popup, text="Close", command=self.master.destroy)
+        button.pack(padx=20, pady=10)
+
+        # Center popup window on current GUI
+        popup.update_idletasks()
+        width = popup.winfo_width()
+        height = popup.winfo_height()
+        x = (self.root.winfo_width() // 2) - (width // 2)
+        y = (self.root.winfo_height() // 2) - (height // 2)
+        popup.geometry('{}x{}+{}+{}'.format(width, height, x, y))
