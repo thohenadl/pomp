@@ -381,7 +381,7 @@ class MyGUI:
         """
         path = path_to_files + "/" + pomp_tagged_dir + "/"
         store_log(self.arr,path,filename)
-        
+
         # Running Tagging Method
         if override:
             start_time = time.time()
@@ -389,8 +389,9 @@ class MyGUI:
             tag_UI_w_POMP(filename)
             end_time = time.time()
             print("Tagging Log: Complete at " + str(end_time))
-        
+
         self.show_popup()
+        
 
     def show_popup(self):
         """
@@ -401,12 +402,23 @@ class MyGUI:
 
         """
         popup = tk.Toplevel(self.root)
-        popup.title("Process Completed")
-        popup.geometry("200x100")
+        popup.title("Pomp Completion")
+        popup.geometry("250x150")
         
-        label = tk.Label(popup, text="Done!")
+        label = tk.Label(popup, text="POMP by Tom Hohenadl", font=("Arial", 12))
         label.pack(padx=20, pady=20)
         
+        # Create a loading icon with "POMP" popping up in sequence
+        # pomps = ["POMP", "POMP .", "POMP ..", "POMP ..."]
+        # loading_label = tk.Label(popup, text="POMP", font=("Arial", 18))
+        # loading_label.pack(pady=10)
+
+        # def update_loading_label(index):
+        #     loading_label.config(text=pomps[index % len(pomps)])
+        #     popup.after(500, update_loading_label, index + 1)
+
+        # update_loading_label(0) 
+
         button = tk.Button(popup, text="Close", command=self.master.destroy)
         button.pack(padx=20, pady=10)
 
@@ -417,3 +429,5 @@ class MyGUI:
         x = (self.root.winfo_width() // 2) - (width // 2)
         y = (self.root.winfo_height() // 2) - (height // 2)
         popup.geometry('{}x{}+{}+{}'.format(width, height, x, y))
+        
+        
