@@ -381,7 +381,9 @@ class MyGUI:
         """
         path = path_to_files + "/" + pomp_tagged_dir + "/"
         store_log(self.arr,path,filename)
-        
+
+        self.show_popup()
+
         # Running Tagging Method
         if override:
             start_time = time.time()
@@ -389,8 +391,9 @@ class MyGUI:
             tag_UI_w_POMP(filename)
             end_time = time.time()
             print("Tagging Log: Complete at " + str(end_time))
+        # time.sleep(5) # Just for testing the processing Pop Up
+        self.modify_popup()
         
-        self.show_popup()
 
     def show_popup(self):
         """
@@ -400,20 +403,57 @@ class MyGUI:
             None
 
         """
-        popup = tk.Toplevel(self.root)
-        popup.title("Process Completed")
-        popup.geometry("200x100")
-        
-        label = tk.Label(popup, text="Done!")
+        self.popup = tk.Toplevel(self.root)
+        self.popup.title("Pomp Completion")
+        self.popup.geometry("300x250")
+
+        label = tk.Label(self.popup, text="Processing Files", font=("Arial", 12))
+        label.pack(padx=20, pady=20)
+
+        # Create a loading icon with "POMP" popping up in sequence
+
+        self.center_popup()
+
+    def modify_popup(self):
+        """
+        Modify the popup window to display a close button.
+
+        Returns:
+            None
+
+        """
+        for widget in self.popup.winfo_children():
+            widget.destroy()
+        self.popup.title("POMP by Tom Hohenadl")
+        self.popup.geometry("200x100")
+        # Add Text to finial Popup
+        label = tk.Label(self.popup, text="Process Completed", font=("Arial", 12))
         label.pack(padx=20, pady=20)
         
-        button = tk.Button(popup, text="Close", command=self.master.destroy)
+        # Add Close Button to Popup
+        button = tk.Button(self.popup, text="Close", command=self.master.destroy)
         button.pack(padx=20, pady=10)
 
-        # Center popup window on current GUI
-        popup.update_idletasks()
-        width = popup.winfo_width()
-        height = popup.winfo_height()
+        self.center_popup()
+
+    def center_popup(self):
+        """Centers a Toplevel popup window on the main GUI window.
+
+        This function updates the Toplevel window geometry to center it on the main
+        GUI window. It should be called after creating and packing the widgets inside
+        the popup window.
+
+        Args:
+            self (object): The current instance of the class.
+
+        Returns:
+            None
+        """
+        self.popup.update_idletasks()
+        width = self.popup.winfo_width()
+        height = self.popup.winfo_height()
         x = (self.root.winfo_width() // 2) - (width // 2)
         y = (self.root.winfo_height() // 2) - (height // 2)
-        popup.geometry('{}x{}+{}+{}'.format(width, height, x, y))
+        self.popup.geometry('{}x{}+{}+{}'.format(width, height, x, y))
+        self.popup.update()
+
