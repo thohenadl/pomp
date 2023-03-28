@@ -43,87 +43,119 @@ class MyGUI:
     def create_file_dropdown(self):
         # Create a label for the dropdown
         label = tk.Label(
-            master = self.root, 
-            text   = "Select a file:",
-            font   = ("Arial", 14),
-            fg     = "#303030",
-            bg     = "#f2f2f2",
-            padx   = 10,
-            pady   = 10,
+            master=self.root,
+            text="Select a file:",
+            font=("Arial", 14),
+            fg="#303030",
+            bg="#f2f2f2",
+            padx=10,
+            pady=10,
         )
-        label.pack(
-            side   = tk.TOP, 
-            anchor = tk.NW
-        )
+        label.pack(side=tk.TOP, anchor=tk.NW)
 
-        # Get a list of all XML and JSON files in the "logs/uilogs/" directory
-        file_list = [f for f in os.listdir(path_to_files + "/" + pomp_tagged_dir + "/") if f.endswith(".xml") or f.endswith(".csv")]
+        # Get a list of all XML and CSV files in the "logs/uilogs/" directory
+        file_list = [
+            f for f in os.listdir(path_to_files + "/" + pomp_tagged_dir + "/")
+            if f.endswith(".xml") or f.endswith(".csv")
+        ]
 
         # Create a dropdown with the file names
-        dropdown_frame = tk.Frame(self.root, bg = "#f2f2f2")
-        dropdown_frame.pack(
-            padx = 10, 
-            pady = 10, 
-            fill = tk.X
-        )
+        dropdown_frame = tk.Frame(self.root, bg="#f2f2f2")
+        dropdown_frame.pack(padx=10, pady=10, fill=tk.X)
 
         tk.Label(
-            master = dropdown_frame, 
-            text   = "Select file:",
-            font   = ("Arial", 12),
-            fg     = "#303030",
-            bg     = "#f2f2f2",
-            padx   = 10,
-            pady   = 10,
-        ).pack(side = tk.LEFT)
+            master=dropdown_frame,
+            text="Select file:",
+            font=("Arial", 12),
+            fg="#303030",
+            bg="#f2f2f2",
+            padx=10,
+            pady=10,
+        ).pack(side=tk.LEFT)
 
         dropdown = ttk.Combobox(
-            master = dropdown_frame, 
-            values = file_list,
-            font   = ("Arial", 12),
-            width  = 30,
+            master=dropdown_frame,
+            values=file_list,
+            font=("Arial", 12),
+            width=30,
         )
-        dropdown.pack(
-            side = tk.LEFT, 
-            padx = 10
-        )
+        dropdown.pack(side=tk.LEFT, padx=10)
         dropdown.current(0)
 
         # Create a "Load" button that doesn't perform any action
         ttk.Button(
-            master  = self.root, 
-            text    = "Load", 
-            command = lambda: self.create_widgets(dropdown.get()),
-            # style   = "AccentButton",
-        ).pack(
-            side = tk.LEFT, 
-            pady = (0, 30)
-        )
+            master=self.root,
+            text="Load",
+            command=lambda: self.create_widgets(dropdown.get(), separator_dropdown.get()),
+        ).pack(side=tk.LEFT, pady=(0, 30))
 
         # Add some padding at the bottom of the window
-        tk.Frame(
-            self.root, 
-            height = 20, 
-            bg     = "#f2f2f2"
-        ).pack(fill = tk.X)
-        
+        tk.Frame(self.root, height=20, bg="#f2f2f2").pack(fill=tk.X)
+
+        # Create a separator dropdown only if a CSV file is selected
+        def show_separator():
+            if dropdown.get().endswith(".csv"):
+                separator_frame.pack(side=tk.TOP, padx=10, pady=10, fill=tk.X)
+            else:
+                separator_frame.pack_forget()
+
+        separator_frame = tk.Frame(self.root, bg="#f2f2f2")
+
+        tk.Label(
+            master=separator_frame,
+            text="Separator:",
+            font=("Arial", 12),
+            fg="#303030",
+            bg="#f2f2f2",
+            padx=10,
+            pady=10,
+        ).pack(side=tk.LEFT)
+
+        separator_dropdown = ttk.Combobox(
+            master=separator_frame,
+            values=[";", ",", ".", "-"],
+            font=("Arial", 12),
+            width=30,
+        )
+        separator_dropdown.pack(side=tk.LEFT, padx=10)
+        separator_dropdown.current(0)
+
+        # Bind a function to the dropdown selection event to show or hide the separator dropdown
+        dropdown.bind("<<ComboboxSelected>>", lambda event: show_separator())
+        show_separator()
+       
     def clear_window(self):
         # Destroy all child widgets of the window
         for widget in self.master.winfo_children():
             widget.destroy()
 
-    def create_widgets(self, filename):
+    def create_widgets(self, filename: str, inputSep: str):
         extension = os.path.splitext(filename)[1]
 
         # Create a 2D numpy array
         if extension == ".csv":
-            self.arr = pd.read_csv(
-                path_to_files + "/" + pomp_tagged_dir + "/" + filename, 
-                sep             = ";", 
-                quotechar       = '"', 
-                engine          = "python",
-                error_bad_lines = False
-            )
+            try:
+                self.arr = pd.read_csv(
+                    path_to_files + "/" + pomp_tagged_dir + "/" + filename, 
+                    sep             = inputSep, 
+                    quotechar       = '"', 
+                    engine          = "python",
+                    error_bad_lines = False
+                )
+            except pd.errors.EmptyDataError as e:
+                self.clear_window()
+                print(e)
+                self.popup = tk.Toplevel(self.root)
+                self.popup.title("Seperator Error")
+                self.popup.geometry("325x200")
+
+                label = tk.Label(self.popup, text=str(e) + "\n\n This is likely due to a wrong seperator. \n Please check your log file.", font=("Arial", 12))
+                label.pack(padx=20, pady=20)
+
+                self.center_popup()
+                self.arr = ""
+                self.create_file_dropdown()
+            
         elif extension == ".xml":
             self.arr = pd.read_xml(path_to_files + "/" + pomp_tagged_dir + "/" + filename)
         else:
@@ -145,6 +177,8 @@ class MyGUI:
             ).pack()
             return
         
+        # This comparison raises an error
+        # To Do: Issue https://github.com/thohenadl/pomp/issues/20
         if "pomp_dim" not in self.arr.columns:
             self.arr["pomp_dim"] = ""
         
@@ -159,6 +193,7 @@ class MyGUI:
         self.widget_action_dropdown()
         self.add_menu()
         self.widget_action_buttons(filename)
+    
 
     def widget_current_line_text(self):
         """
