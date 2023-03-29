@@ -37,7 +37,7 @@ class userInteraction:
             self.set_attribute('pompDim',self.context_array['pomp_dim'].iloc[0])
             self.context_array.drop('pomp_dim',axis=1,inplace=True)
         self.boundary = False # for the Mikro-task boundary tag, Default False
-        self.hash = hash(self)
+        self.hash = hash(self) # Calculate a hash for fast set/list comparison
 
     def drop_columns_with_TermsForMissing(self):
         """

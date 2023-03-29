@@ -55,7 +55,7 @@ class MyGUI:
 
         # Get a list of all XML and CSV files in the "logs/uilogs/" directory
         file_list = [
-            f for f in os.listdir(path_to_files + "/" + pomp_tagged_dir + "/")
+            f for f in os.listdir(path_to_pomp)
             if f.endswith(".xml") or f.endswith(".csv")
         ]
 
@@ -86,58 +86,26 @@ class MyGUI:
         ttk.Button(
             master=self.root,
             text="Load",
-            command=lambda: self.create_widgets(dropdown.get(), separator_dropdown.get()),
+            command=lambda: self.create_widgets(dropdown.get()),
         ).pack(side=tk.LEFT, pady=(0, 30))
 
         # Add some padding at the bottom of the window
         tk.Frame(self.root, height=20, bg="#f2f2f2").pack(fill=tk.X)
-
-        # Create a separator dropdown only if a CSV file is selected
-        def show_separator():
-            if dropdown.get().endswith(".csv"):
-                separator_frame.pack(side=tk.TOP, padx=10, pady=10, fill=tk.X)
-            else:
-                separator_frame.pack_forget()
-
-        separator_frame = tk.Frame(self.root, bg="#f2f2f2")
-
-        tk.Label(
-            master=separator_frame,
-            text="Separator:",
-            font=("Arial", 12),
-            fg="#303030",
-            bg="#f2f2f2",
-            padx=10,
-            pady=10,
-        ).pack(side=tk.LEFT)
-
-        separator_dropdown = ttk.Combobox(
-            master=separator_frame,
-            values=[";", ",", ".", "-"],
-            font=("Arial", 12),
-            width=30,
-        )
-        separator_dropdown.pack(side=tk.LEFT, padx=10)
-        separator_dropdown.current(0)
-
-        # Bind a function to the dropdown selection event to show or hide the separator dropdown
-        dropdown.bind("<<ComboboxSelected>>", lambda event: show_separator())
-        show_separator()
        
     def clear_window(self):
         # Destroy all child widgets of the window
         for widget in self.master.winfo_children():
             widget.destroy()
 
-    def create_widgets(self, filename: str, inputSep: str):
+    def create_widgets(self, filename: str):
         extension = os.path.splitext(filename)[1]
 
         # Create a 2D numpy array
         if extension == ".csv":
             try:
                 self.arr = pd.read_csv(
-                    path_to_files + "/" + pomp_tagged_dir + "/" + filename, 
-                    sep             = inputSep, 
+                    path_to_pomp + filename, 
+                    sep             = None, 
                     quotechar       = '"', 
                     engine          = "python",
                     error_bad_lines = False
@@ -157,7 +125,7 @@ class MyGUI:
                 self.create_file_dropdown()
             
         elif extension == ".xml":
-            self.arr = pd.read_xml(path_to_files + "/" + pomp_tagged_dir + "/" + filename)
+            self.arr = pd.read_xml(path_to_pomp + filename)
         else:
             # Destroy any existing error labels
             for widget in self.master.winfo_children():
@@ -414,18 +382,17 @@ class MyGUI:
         Returns:
             None
         """
-        path = path_to_files + "/" + pomp_tagged_dir + "/"
-        store_log(self.arr,path,filename)
+        store_log(self.arr,path_to_pomp,filename,csv_sep)
 
         self.show_popup()
 
         # Running Tagging Method
         if override:
             start_time = time.time()
-            print("Tagging Log: Start at " + str(start_time))
             tag_UI_w_POMP(filename)
             end_time = time.time()
-            print("Tagging Log: Complete at " + str(end_time))
+            tdelta = end_time - start_time
+            print("Tagging Log: Completed in " + str(round(tdelta,3)) + " seconds")
         # time.sleep(5) # Just for testing the processing Pop Up
         self.modify_popup()
         

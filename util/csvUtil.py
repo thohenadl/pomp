@@ -1,12 +1,14 @@
 import pandas as pd
 import os
+import csv
 from pm4py.objects.log.util import dataframe_utils
 from pm4py.objects.conversion.log import converter as log_converter
 from pm4py.objects.log.importer.xes import importer as xes_importer
 
+
 from const import *
 
-def prepare_log(log_name: str, version: int, seper: str, parse_dates=False) -> pd.DataFrame:
+def prepare_log(log_name: str, version: int, parse_dates=False) -> pd.DataFrame:
     """
     Prepares a log file and converts .xes or .csv into a Pandas Dataframe
 
@@ -27,35 +29,36 @@ def prepare_log(log_name: str, version: int, seper: str, parse_dates=False) -> p
         frame = log_converter.apply(log1, variant=log_converter.Variants.TO_DATA_FRAME)
         frame = frame.reset_index()
     else:
-        frame = pd.read_csv(path_to_files + "/" + directory + "/" + log_name, sep=seper, quotechar='"',encoding="latin-1", engine="python", error_bad_lines=False, parse_dates=parse_dates)
+        frame = pd.read_csv(path_to_files + "/" + directory + "/" + log_name, sep=None, quotechar='"',encoding="latin-1", engine="python", error_bad_lines=False, parse_dates=False)
     return frame
 
-def load_and_convert_to_log(path, case, timestamp, sep):
-    log_csv = read_csv(path, sep)
+def load_and_convert_to_log(path, case, timestamp):
+    log_csv = read_csv(path)
     log_csv = log_csv.sort_values(timestamp)
     event_log = log_converter.apply(log_csv,parameters={log_converter.to_event_log.Parameters.CASE_ID_KEY: case})
     return event_log
 
 
-def read_csv(path, sep):
+def read_csv(path):
     try:
-        log_csv = pd.read_csv(path, sep=sep)
+        log_csv = pd.read_csv(path, sep=None)
     except UnicodeDecodeError:
-        log_csv = pd.read_csv(path, sep=sep, encoding="ISO-8859-1")
+        log_csv = pd.read_csv(path, sep=None, encoding="ISO-8859-1")
     log_csv = dataframe_utils.convert_timestamp_columns_in_df(log_csv)
     return log_csv
 
-def store_log(df: pd.DataFrame, path: str, filename: str):
+def store_log(df: pd.DataFrame, path: str, filename: str, seperator: str):
     """
     Stores a pandas DataFrame as a CSV or XML file at the specified location.
 
     Parameters:
-    df (pandas.DataFrame): The DataFrame to be stored.
-    path (str): The path to the directory where the file should be stored.
-    filename (str): The name of the file to be stored, including the file extension (e.g. "data.csv").
+        df (pandas.DataFrame): The DataFrame to be stored.
+        path (str): The path to the directory where the file should be stored.
+        filename (str): The name of the file to be stored, including the file extension (e.g. "data.csv").
+        seperator (str): csv seperator to store the file with
 
     Returns:
-    None.
+        None.
 
     Raises:
     ValueError: If the file extension is not ".csv" or ".xml".
@@ -102,4 +105,3 @@ def find_file(filename: str, folder_path: str) -> str:
 
     # If the file was not found, return an empty string
     raise FileNotFoundError("POMP Tagged File not found! \n File-folder ")
-

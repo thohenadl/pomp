@@ -11,6 +11,7 @@ from util.filtering import get_col_filtered_df
 
 # Import necessary libaries
 import pandas as pd
+import time
 
 def generate_unique_UI_set(log: pd.DataFrame) -> set:
     """
@@ -82,13 +83,13 @@ def tag_UI_w_POMP(tagged_filename: str):
     
     untagged_ui = set()
     newly_tagged = set()
-    lenth_file = -1
+    # lenth_file = -1
     # Get all files in folder
     for (dir_path, dir_names, filenames) in os.walk(path_to_files + "/" + log_dir):
         # Iterate over files in folder that should be tagged
         for filename in filenames:
             # Prepare File
-            df_file = prepare_log(filename,1,seperator)
+            df_file = prepare_log(filename,1)
             # Filter on context attributes
             df_context_file = get_col_filtered_df(df_file,context_attributes)
             lenth_file = len(df_context_file)
@@ -113,22 +114,52 @@ def tag_UI_w_POMP(tagged_filename: str):
                     # ToDo does return none at the moment
                     # print("Pomp Dim is " + match.get_attribute("pompDim"))
                     df_file.loc[index,'pomp_dim'] = match.get_attribute("pompDim")
-                print("********** Index: " + str(index) + " ************")
+                # print("********** Index: " + str(index) + " ************")
             print(df_file)
             filepath = path_to_files + "/" + log_dir
-            store_log(df_file,filepath,filename)
-            # To Do: Store df_file
+            store_log(df_file,filepath,filename,",")
     
-    print(len(untagged_ui))
-    print(len(newly_tagged))
-    print(lenth_file)
+    print("Empty User actions remaining untagged: " + str(len(untagged_ui)))
+    print("Unique user interactions tagged: " + str(len(newly_tagged)))
+    print("Number of files processed: " + str(len(filenames)))
+
+    log_from_untagged(untagged_ui)
+
+def log_from_untagged(uiList: set):
+    """
+    The function takes a set of untagged user interactions
+        and creates a file in the POMP folder with all untagged actions.
+        The file can be used to tag all previously undetected actions.
+
+    Args:
+        uiList (set): Set of untagged user interactions
+
+    Returns:
+        file (csv): stores a file into the pompTagged Folder
+    """
     
-    return True
 
+    # Initialize an empty DataFrame with columns for each context parameter title
+    columns = []
+    for ui in uiList:
+        columns.extend(list(ui.context_array.columns))
+    columns = list(set(columns)) # Remove duplicates
+    df = pd.DataFrame(columns=columns)
 
-# Append Empty Actions to Tagged File
-def append_Empty():
-    # Each unique untagged row will be added to initial tagged file for manual processing
-    str("something")
+    # Iterate over the userInteraction objects and add each context_array to the DataFrame
+    for ui in uiList:
+        row = {}
+        for col in columns:
+            if col in ui.context_array:
+                row[col] = ui.context_array[col].iloc[0]
+            else:
+                row[col] = None
+        df = df.append(row, ignore_index=True)
 
-# Store files
+    datetime = time.strftime("%Y%m%d-%H%M%S")
+    untagged_filename = "untaggedUI-datetime-" + datetime + ".csv"
+    store_log(df, path_to_pomp, untagged_filename, csv_sep)
+
+    # ToDo: Get the complete UI -> Somewhere get the index from the initial file
+    #   get the complete row from the initial dataframe, store complete User Interaction
+    # Enhancement: https://github.com/thohenadl/pomp/issues/22
