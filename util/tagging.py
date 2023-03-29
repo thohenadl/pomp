@@ -159,3 +159,7 @@ def log_from_untagged(uiList: set):
     datetime = time.strftime("%Y%m%d-%H%M%S")
     untagged_filename = "untaggedUI-datetime-" + datetime + ".csv"
     store_log(df, path_to_pomp, untagged_filename, csv_sep)
+
+    # ToDo: Get the complete UI -> Somewhere get the index from the initial file
+    #   get the complete row from the initial dataframe, store complete User Interaction
+    # Enhancement: https://github.com/thohenadl/pomp/issues/22
