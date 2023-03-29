@@ -9,6 +9,8 @@ output_dir = 'output'
 
 path_to_files = os.path.join(dirname, 'logs')
 path_to_pomp = path_to_files + "/" + pomp_tagged_dir + "/"
+# Only used for storing logs:
+csv_sep = ";"
 
 
 context_attributes_ActionLogger = ["eventType", "target.name", "targetApp", "target.workbookName", "target.sheetName", "target.innerText", "target.tagName"]

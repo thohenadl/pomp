@@ -382,14 +382,13 @@ class MyGUI:
         Returns:
             None
         """
-        store_log(self.arr,path_to_pomp,filename)
+        store_log(self.arr,path_to_pomp,filename,csv_sep)
 
         self.show_popup()
 
         # Running Tagging Method
         if override:
             start_time = time.time()
-            print("Tagging Log: Start at " + str(start_time))
             tag_UI_w_POMP(filename)
             end_time = time.time()
             tdelta = end_time - start_time

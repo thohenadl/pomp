@@ -136,4 +136,4 @@ def log_from_untagged(uiList: set):
     """
     df = pd.DataFrame()
     datetime = '{date:%Y-%m-%d_%H-%M-%S}.txt'.format( date=datetime.datetime.now() )
-    store_log(df, path_to_pomp, "untaggedUI-datetime", ",")
+    store_log(df, path_to_pomp, "untaggedUI-datetime", csv_sep)
