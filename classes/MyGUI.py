@@ -424,7 +424,8 @@ class MyGUI:
             print("Tagging Log: Start at " + str(start_time))
             tag_UI_w_POMP(filename)
             end_time = time.time()
-            print("Tagging Log: Complete at " + str(end_time))
+            tdelta = end_time - start_time
+            print("Tagging Log: Completed in " + str(tdelta))
         # time.sleep(5) # Just for testing the processing Pop Up
         self.modify_popup()
         
