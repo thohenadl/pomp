@@ -1,19 +1,13 @@
-import os
 import tkinter as tk
 import warnings
-import sys
 import argparse
 
 import pandas as pd
 
-
 from classes.MyGUI import MyGUI
 import classes.userInteraction as ui
 
-from util.csvUtil import log_converter, find_file, prepare_log
-
 warnings.simplefilter('ignore')
-
 
 def showGui():
     gui = MyGUI()

@@ -45,7 +45,7 @@ def generate_unique_UI_set(log: pd.DataFrame) -> set:
     return unique_UI_set
 
 # Iterate over un-tagged log
-def tag_UI_w_POMP(tagged_filename: str):
+def tag_UI_w_POMP(tagged_filename: str) -> None:
     """
     Takes in two user interaction log files: one tagged with an attribute POMP and another 
         without tags. The first file is scanned for unique user interactions and their 
@@ -125,11 +125,12 @@ def tag_UI_w_POMP(tagged_filename: str):
 
     log_from_untagged(untagged_ui)
 
-def log_from_untagged(uiList: set):
+def log_from_untagged(uiList: set) -> None:
     """
     The function takes a set of untagged user interactions
         and creates a file in the POMP folder with all untagged actions.
         The file can be used to tag all previously undetected actions.
+        Stores a csv file only if empty actions were found.
 
     Args:
         uiList (set): Set of untagged user interactions
@@ -137,28 +138,28 @@ def log_from_untagged(uiList: set):
     Returns:
         file (csv): stores a file into the pompTagged Folder
     """
-    
+    if len(uiList) > 0:
+        # Initialize an empty DataFrame with columns for each context parameter title
+        columns = []
+        for ui in uiList:
+            columns.extend(list(ui.context_array.columns))
+        columns = list(set(columns)) # Remove duplicates
+        df = pd.DataFrame(columns=columns)
 
-    # Initialize an empty DataFrame with columns for each context parameter title
-    columns = []
-    for ui in uiList:
-        columns.extend(list(ui.context_array.columns))
-    columns = list(set(columns)) # Remove duplicates
-    df = pd.DataFrame(columns=columns)
+        # Iterate over the userInteraction objects and add each context_array to the DataFrame
+        for ui in uiList:
+            row = {}
+            for col in columns:
+                if col in ui.context_array:
+                    row[col] = ui.context_array[col].iloc[0]
+                else:
+                    row[col] = None
+            df = df.append(row, ignore_index=True)
 
-    # Iterate over the userInteraction objects and add each context_array to the DataFrame
-    for ui in uiList:
-        row = {}
-        for col in columns:
-            if col in ui.context_array:
-                row[col] = ui.context_array[col].iloc[0]
-            else:
-                row[col] = None
-        df = df.append(row, ignore_index=True)
 
-    datetime = time.strftime("%Y%m%d-%H%M%S")
-    untagged_filename = "untaggedUI-datetime-" + datetime + ".csv"
-    store_log(df, path_to_pomp, untagged_filename, csv_sep)
+        datetime = time.strftime("%Y%m%d-%H%M%S")
+        untagged_filename = "untaggedUI-" + datetime + ".csv"
+        store_log(df, path_to_pomp, untagged_filename, csv_sep)
 
     # ToDo: Get the complete UI -> Somewhere get the index from the initial file
     #   get the complete row from the initial dataframe, store complete User Interaction
