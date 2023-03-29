@@ -122,13 +122,19 @@ def tag_UI_w_POMP(tagged_filename: str):
     print(len(untagged_ui))
     print(len(newly_tagged))
     print(lenth_file)
-    
-    return True
 
+def log_from_untagged(uiList: set):
+    """
+    The function takes a set of untagged user interactions
+        and creates a file in the POMP folder with all untagged actions.
+        The file can be used to tag all previously undetected actions.
 
-# Append Empty Actions to Tagged File
-def append_Empty():
-    # Each unique untagged row will be added to initial tagged file for manual processing
-    str("something")
+    Args:
+        uiList (set): Set of untagged user interactions
 
-# Store files
+    Returns:
+        file (csv): stores a file into the pompTagged Folder
+    """
+    df = pd.DataFrame()
+    datetime = '{date:%Y-%m-%d_%H-%M-%S}.txt'.format( date=datetime.datetime.now() )
+    store_log(df, path_to_pomp, "untaggedUI-datetime")

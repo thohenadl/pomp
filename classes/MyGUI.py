@@ -55,7 +55,7 @@ class MyGUI:
 
         # Get a list of all XML and CSV files in the "logs/uilogs/" directory
         file_list = [
-            f for f in os.listdir(path_to_files + "/" + pomp_tagged_dir + "/")
+            f for f in os.listdir(path_to_pomp)
             if f.endswith(".xml") or f.endswith(".csv")
         ]
 
@@ -136,7 +136,7 @@ class MyGUI:
         if extension == ".csv":
             try:
                 self.arr = pd.read_csv(
-                    path_to_files + "/" + pomp_tagged_dir + "/" + filename, 
+                    path_to_pomp + filename, 
                     sep             = inputSep, 
                     quotechar       = '"', 
                     engine          = "python",
@@ -157,7 +157,7 @@ class MyGUI:
                 self.create_file_dropdown()
             
         elif extension == ".xml":
-            self.arr = pd.read_xml(path_to_files + "/" + pomp_tagged_dir + "/" + filename)
+            self.arr = pd.read_xml(path_to_pomp + filename)
         else:
             # Destroy any existing error labels
             for widget in self.master.winfo_children():
@@ -414,8 +414,7 @@ class MyGUI:
         Returns:
             None
         """
-        path = path_to_files + "/" + pomp_tagged_dir + "/"
-        store_log(self.arr,path,filename)
+        store_log(self.arr,path_to_pomp,filename)
 
         self.show_popup()
 

@@ -3,10 +3,13 @@ import os
 dirname = os.path.dirname(__file__)
 seperator = ";"
 
-path_to_files = os.path.join(dirname, 'logs')
 log_dir = 'uilogs'
 pomp_tagged_dir = 'pompTagged'
 output_dir = 'output'
+
+path_to_files = os.path.join(dirname, 'logs')
+path_to_pomp = path_to_files + "/" + pomp_tagged_dir + "/"
+
 
 context_attributes_ActionLogger = ["eventType", "target.name", "targetApp", "target.workbookName", "target.sheetName", "target.innerText", "target.tagName"]
 context_attributes_smartRPA = ["category","application","event_type","worksheets","current_worksheet","tag_category","tag_type","tag_name","tag_title","xpath","xpath_full"]
