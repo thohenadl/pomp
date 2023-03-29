@@ -11,6 +11,7 @@ from util.filtering import get_col_filtered_df
 
 # Import necessary libaries
 import pandas as pd
+import time
 
 def generate_unique_UI_set(log: pd.DataFrame) -> set:
     """
@@ -122,6 +123,8 @@ def tag_UI_w_POMP(tagged_filename: str):
     print("Unique user interactions tagged: " + str(len(newly_tagged)))
     print("Number of files processed: " + str(len(filenames)))
 
+    log_from_untagged(untagged_ui)
+
 def log_from_untagged(uiList: set):
     """
     The function takes a set of untagged user interactions
@@ -134,6 +137,25 @@ def log_from_untagged(uiList: set):
     Returns:
         file (csv): stores a file into the pompTagged Folder
     """
-    df = pd.DataFrame()
-    datetime = '{date:%Y-%m-%d_%H-%M-%S}.txt'.format( date=datetime.datetime.now() )
-    store_log(df, path_to_pomp, "untaggedUI-datetime", csv_sep)
+    
+
+    # Initialize an empty DataFrame with columns for each context parameter title
+    columns = []
+    for ui in uiList:
+        columns.extend(list(ui.context_array.columns))
+    columns = list(set(columns)) # Remove duplicates
+    df = pd.DataFrame(columns=columns)
+
+    # Iterate over the userInteraction objects and add each context_array to the DataFrame
+    for ui in uiList:
+        row = {}
+        for col in columns:
+            if col in ui.context_array:
+                row[col] = ui.context_array[col].iloc[0]
+            else:
+                row[col] = None
+        df = df.append(row, ignore_index=True)
+
+    datetime = time.strftime("%Y%m%d-%H%M%S")
+    untagged_filename = "untaggedUI-datetime-" + datetime + ".csv"
+    store_log(df, path_to_pomp, untagged_filename, csv_sep)
