@@ -82,13 +82,13 @@ def tag_UI_w_POMP(tagged_filename: str):
     
     untagged_ui = set()
     newly_tagged = set()
-    lenth_file = -1
+    # lenth_file = -1
     # Get all files in folder
     for (dir_path, dir_names, filenames) in os.walk(path_to_files + "/" + log_dir):
         # Iterate over files in folder that should be tagged
         for filename in filenames:
             # Prepare File
-            df_file = prepare_log(filename,1,seperator)
+            df_file = prepare_log(filename,1)
             # Filter on context attributes
             df_context_file = get_col_filtered_df(df_file,context_attributes)
             lenth_file = len(df_context_file)
@@ -113,15 +113,14 @@ def tag_UI_w_POMP(tagged_filename: str):
                     # ToDo does return none at the moment
                     # print("Pomp Dim is " + match.get_attribute("pompDim"))
                     df_file.loc[index,'pomp_dim'] = match.get_attribute("pompDim")
-                print("********** Index: " + str(index) + " ************")
+                # print("********** Index: " + str(index) + " ************")
             print(df_file)
             filepath = path_to_files + "/" + log_dir
-            store_log(df_file,filepath,filename)
-            # To Do: Store df_file
+            store_log(df_file,filepath,filename,",")
     
-    print(len(untagged_ui))
-    print(len(newly_tagged))
-    print(lenth_file)
+    print("Empty User actions remaining untagged: " + str(len(untagged_ui)))
+    print("Unique user interactions tagged: " + str(len(newly_tagged)))
+    print("Number of files processed: " + str(len(filenames)))
 
 def log_from_untagged(uiList: set):
     """
@@ -137,4 +136,4 @@ def log_from_untagged(uiList: set):
     """
     df = pd.DataFrame()
     datetime = '{date:%Y-%m-%d_%H-%M-%S}.txt'.format( date=datetime.datetime.now() )
-    store_log(df, path_to_pomp, "untaggedUI-datetime")
+    store_log(df, path_to_pomp, "untaggedUI-datetime", ",")
