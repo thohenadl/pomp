@@ -24,12 +24,4 @@ if __name__ == "__main__":
     print("*************************")
     print("New execution started \n")
 
-    # ToDo: Create UI To generate POMP Tagged File into Folder pomp_tagged_dir from const.py
     showGui()
-
-    # Tagges a single file with the POMP tags from the POMP Tagged folder file
-    # Hard Coded for now
-    # tagged_file = "pompTagged"
-    # tag_UI_w_POMP(tagged_file)
-
-      
