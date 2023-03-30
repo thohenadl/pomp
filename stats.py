@@ -16,6 +16,7 @@ if __name__ == "__main__":
     # parser.add_argument('filename')   
     args = parser.parse_args()
 
-    unique_uis = stats(path_to_untagged)
+    total_rows_count, total_files_count, unique_rows_count, unique_uis = stats(path_to_untagged)
+    pickle_set(unique_uis)
 
     sys.exit()
