@@ -44,7 +44,7 @@ def generate_unique_UI_set(log: pd.DataFrame) -> set:
     # Return set of unique user interactions
     return unique_UI_set
 
-def generate_stats_unique_UI_set(log: pd.DataFrame) -> set:
+def generate_stats_unique_UI_set(log: pd.DataFrame, uiset: set) -> set:
     """
     The function generate_stats_unique_UI_set takes a Pandas DataFrame log as input and 
         returns a set containing unique instances of userInteraction objects created 
@@ -54,33 +54,33 @@ def generate_stats_unique_UI_set(log: pd.DataFrame) -> set:
     
     Args:
         log (Pandas DataFrame): The input DataFrame containing data to create userInteraction objects from.
-    
+        uiset (set): Set of unique user actions
+
     Returns:
-        unique_UI_set (Set): A set of unique instances of userInteraction objects.
+        uiset (Set): A set of unique instances of userInteraction objects.
     """
-    unique_UI_set = set()
-    break_counter = 0
+    # break_counter = 0
     for index, row in log.iterrows():
-        print(str(index) + " of " + str(len(log)) + " - Uniques: " + str(len(unique_UI_set)))
+        print(str(index) + " of " + str(len(log)) + " - Uniques: " + str(len(uiset)))
         # Create a dataframe from the row, which is added to the userInteraction
         row_df = row.to_frame().T
         # Create a new user Interaction
         row_UI = ui.userInteraction(row_df)
         # Check if User Interaction is already in unique set and if add to set
-        if row_UI not in unique_UI_set:
+        if row_UI not in uiset:
             # print("Added " + str(row_UI))
-            unique_UI_set.add(row_UI)
+            uiset.add(row_UI)
             # Reset Break counter if a unique UI was added
-            break_counter = 0
-        else:
-            # Check if the Uniques count has changed in the last 200 scanned events
-            # Just some time optimization
-            break_counter += 1
-            if break_counter > 200:
-                break
+        #     break_counter = 0
+        # else:
+        #     # Check if the Uniques count has changed in the last 200 scanned events
+        #     # Just some time optimization
+        #     break_counter += 1
+        #     if break_counter > 1000:
+        #         break
     
     # Return set of unique user interactions
-    return unique_UI_set
+    return uiset
 
 # Iterate over un-tagged log
 def tag_UI_w_POMP(tagged_filename: str) -> None:
