@@ -14,6 +14,8 @@ class MyGUI:
         self.contextValue_state = False
         self.root = tk.Tk()
         self.root.geometry("1250x500")
+        # Adding ICO: https://stackoverflow.com/questions/23773825/how-can-change-the-logo-of-tkinter-gui-screen
+        self.root.wm_iconbitmap('pomp.ico')
         self.master = self.root
         self.master.title("POMP")
         self.result = None
