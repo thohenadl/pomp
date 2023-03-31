@@ -39,7 +39,7 @@ def load_and_convert_to_log(path, case, timestamp):
     return event_log
 
 
-def read_csv(path):
+def read_csv(path: str) -> None:
     try:
         log_csv = pd.read_csv(path, sep=None)
     except UnicodeDecodeError:
@@ -79,7 +79,7 @@ def store_log(df: pd.DataFrame, path: str, filename: str, seperator: str):
         raise ValueError("Unsupported file extension: {}".format(extension))
 
 
-def load_and_convert_to_df(log):
+def load_and_convert_to_df(log) -> None:
     return log_converter.apply(log, variant=log_converter.Variants.TO_DATA_FRAME)
 
 

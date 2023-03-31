@@ -39,7 +39,7 @@ class userInteraction:
         self.boundary = False # for the Mikro-task boundary tag, Default False
         self.hash = hash(self) # Calculate a hash for fast set/list comparison
 
-    def drop_columns_with_TermsForMissing(self):
+    def drop_columns_with_TermsForMissing(self) -> None:
         """
         Drops all columns from a Context Array DataFrame that contain any value from a provided list.
         Drop is conducted inplace, thus no return required.
@@ -51,11 +51,11 @@ class userInteraction:
             if any(self.context_array[col].isin(TERMS_FOR_MISSING)):
                 self.context_array.drop(col, axis=1, inplace=True)
 
-    def setContextString(self):
+    def setContextString(self) -> None:
         row_str = ', '.join(str(val) for val in self.context_array.iloc[0])
         self.context_fields_str = row_str
 
-    def equals(self, other):
+    def equals(self, other: object) -> bool:
         """
         Checks whether this UserInteraction instance is equal to another instance.
 
@@ -110,7 +110,7 @@ class userInteraction:
         for each in self.__dict__.values():
             yield each
 
-    def get_attribute(self, attr_name):
+    def get_attribute(self, attr_name: str) -> object:
         """
         Gets the value of the specified attribute of this UserInteraction instance.
 
@@ -122,7 +122,7 @@ class userInteraction:
         """
         return getattr(self, attr_name)
 
-    def set_attribute(self, attr_name: str, attr_value: any):
+    def set_attribute(self, attr_name: str, attr_value: any) -> None:
         """
         Sets the value of the specified attribute of this UserInteraction instance.
 
@@ -134,7 +134,7 @@ class userInteraction:
             raise ValueError(f"POMP dimension must be one of {action_Dimensions}.")
         setattr(self, attr_name, attr_value)
 
-    def delete_attribute(self, attr_name):
+    def delete_attribute(self, attr_name: str) -> None:
         """
         Deletes the specified attribute of this UserInteraction instance.
 

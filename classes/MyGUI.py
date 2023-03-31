@@ -14,6 +14,8 @@ class MyGUI:
         self.contextValue_state = False
         self.root = tk.Tk()
         self.root.geometry("1250x500")
+        # Adding ICO: https://stackoverflow.com/questions/23773825/how-can-change-the-logo-of-tkinter-gui-screen
+        self.root.wm_iconbitmap('pomp.ico')
         self.master = self.root
         self.master.title("POMP")
         self.result = None
@@ -40,7 +42,7 @@ class MyGUI:
         )
         self.create_file_dropdown()
     
-    def create_file_dropdown(self):
+    def create_file_dropdown(self) -> None:
         # Create a label for the dropdown
         label = tk.Label(
             master=self.root,
@@ -92,12 +94,12 @@ class MyGUI:
         # Add some padding at the bottom of the window
         tk.Frame(self.root, height=20, bg="#f2f2f2").pack(fill=tk.X)
        
-    def clear_window(self):
+    def clear_window(self) -> None:
         # Destroy all child widgets of the window
         for widget in self.master.winfo_children():
             widget.destroy()
 
-    def create_widgets(self, filename: str):
+    def create_widgets(self, filename: str) -> None:
         extension = os.path.splitext(filename)[1]
 
         # Create a 2D numpy array
@@ -150,6 +152,8 @@ class MyGUI:
         if "pomp_dim" not in self.arr.columns:
             self.arr["pomp_dim"] = ""
         
+        # Solves issue #8 - https://github.com/thohenadl/pomp/issues/8
+        self.arr = self.arr[self.arr['pomp_dim'].isna()]
         self.currentLine = 0
         self.clear_window()
 
@@ -163,7 +167,7 @@ class MyGUI:
         self.widget_action_buttons(filename)
     
 
-    def widget_current_line_text(self):
+    def widget_current_line_text(self) -> None:
         """
         Function does display the current line of the UI log
 
@@ -201,7 +205,7 @@ class MyGUI:
             self.set_button_state(self.button_tag,"disabled")
         text.grid(column = 0, row = 0, columnspan = 3, sticky='nsew')
 
-    def widget_action_dropdown(self):
+    def widget_action_dropdown(self) -> None:
         """
         Creates a dropdown widget that allows the user to select an action from a list of pre-defined options.
         
@@ -230,7 +234,7 @@ class MyGUI:
         )
         self.dropdown.grid(column = 1, row = 1, columnspan = 3, sticky='nsew')
     
-    def widget_action_buttons(self, filename: str):
+    def widget_action_buttons(self, filename: str) -> None:
         """
         This function does create 3 buttons to tag the presented entry in the GUI.
             1. Button: Tags the current line
@@ -271,29 +275,29 @@ class MyGUI:
         self.button_finish.grid(column = 3, row = 2, sticky='nsew')
 
 
-    def change_HideNAN_state(self):
+    def change_HideNAN_state(self) -> None:
         # Solves issue #14 - https://github.com/thohenadl/pomp/issues/14
         if self.hideNAN_state:
             self.hideNAN_state = False
         else:
             self.hideNAN_state = True
 
-    def change_contextValues_state(self):
+    def change_contextValues_state(self) -> None:
         # Solves issue #14 - https://github.com/thohenadl/pomp/issues/14
         if self.contextValue_state:
             self.contextValue_state = False
         else:
             self.contextValue_state = True
 
-    def toggle_hide_nan(self):
+    def toggle_hide_nan(self) -> None:
         self.change_HideNAN_state()
         self.widget_current_line_text()
 
-    def toggle_context_values(self):
+    def toggle_context_values(self) -> None:
         self.change_contextValues_state()
         self.widget_current_line_text()
 
-    def add_menu(self):
+    def add_menu(self) -> None:
         """
         Adds a menu to the GUI with several buttons, such as "File" and "Options".
 
@@ -319,7 +323,7 @@ class MyGUI:
         options.add_checkbutton(label="Hide NaN Values", command=self.toggle_hide_nan)
         options.add_checkbutton(label="Context Values Only", command=self.toggle_context_values)
         
-    def reopen_file_dropdown(self):
+    def reopen_file_dropdown(self) -> None:
         """
         Function does take in the GUI, removes all GUI elements and opens
             the file selction process again
@@ -333,7 +337,7 @@ class MyGUI:
         self.clear_gui()
         self.create_file_dropdown()
 
-    def set_button_state(self, button: object, state: str):
+    def set_button_state(self, button: object, state: str) -> None:
         """
         Method to disable the "Set Tag/Next Line" Button
 
@@ -353,21 +357,21 @@ class MyGUI:
             raise NameError("No such Button - Cannot change state of button in GUI")
             
 
-    def run(self):
+    def run(self) -> None:
         self.master.mainloop()
 
-    def print_input(self, action):
+    def print_input(self, action: str) -> None:
         print("Selected Action: ", action)
         if action in action_Dimensions:
             self.arr.loc[self.currentLine, "pomp_dim"] = action
         
         self.currentLine += 1
 
-    def clear_gui(self):
+    def clear_gui(self) -> None:
         for widget in self.root.winfo_children():
             widget.destroy()
 
-    def finish_and_tag_files(self, filename: str, override: bool):
+    def finish_and_tag_files(self, filename: str, override: bool) -> None:
         """
         Finish and tag log files.
 
@@ -397,7 +401,7 @@ class MyGUI:
         self.modify_popup()
         
 
-    def show_popup(self):
+    def show_popup(self) -> None:
         """
         Create a popup window to show that the process has been completed.
 
@@ -416,7 +420,7 @@ class MyGUI:
 
         self.center_popup()
 
-    def modify_popup(self):
+    def modify_popup(self) -> None:
         """
         Modify the popup window to display a close button.
 
@@ -438,7 +442,7 @@ class MyGUI:
 
         self.center_popup()
 
-    def center_popup(self):
+    def center_popup(self) -> None:
         """Centers a Toplevel popup window on the main GUI window.
 
         This function updates the Toplevel window geometry to center it on the main
