@@ -14,6 +14,7 @@ path_to_pomp = path_to_files + "/" + pomp_tagged_dir + "/"
 # Only used for storing logs:
 csv_sep = ";"
 
+pompDimCol = 'pomp_dim'
 overhead_columns = ["case:concept:name", "time:timestamp", "org:resource", "case:creator", "lifecycle:transition"]
 context_attributes_ActionLogger = ["eventType", "target.name", "targetApp", "target.workbookName", "target.sheetName", "target.innerText", "target.tagName"]
 context_attributes_smartRPA = ["concept:name","category","application","id","event_type","tag_category","tag_type","tag_title"]
