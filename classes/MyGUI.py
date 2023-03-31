@@ -152,6 +152,8 @@ class MyGUI:
         if "pomp_dim" not in self.arr.columns:
             self.arr["pomp_dim"] = ""
         
+        # Solves issue #8 - https://github.com/thohenadl/pomp/issues/8
+        self.arr = self.arr[self.arr['pomp_dim'].isna()]
         self.currentLine = 0
         self.clear_window()
 
