@@ -61,7 +61,7 @@ def generate_stats_unique_UI_set(log: pd.DataFrame, uiset: set) -> set:
     """
     # break_counter = 0
     for index, row in log.iterrows():
-        print(str(index) + " of " + str(len(log)) + " - Uniques: " + str(len(uiset)))
+        print(str(index) + " of " + str(len(log.index)) + " - Uniques: " + str(len(uiset)))
         # Create a dataframe from the row, which is added to the userInteraction
         row_df = row.to_frame().T
         # Create a new user Interaction

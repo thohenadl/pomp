@@ -5,7 +5,10 @@ import os
 import pickle
 import pandas as pd
 import time
-from const import overhead_columns, context_attributes_all
+import xml.etree.ElementTree as ET
+
+# Imports from Project
+from const import overhead_columns, context_attributes_all, uiobjects_dir
 from util.tagging import generate_stats_unique_UI_set, get_col_filtered_df
 
 def stats(folder_path: str) -> int:
@@ -23,7 +26,7 @@ def stats(folder_path: str) -> int:
         uiobjects (set): Set of unique User Interactions in folder
     """
     # Initialize a set to hold unique rows across all files
-    unique_rows_count = set()
+    unique_rows = set()
     total_rows_count = 0
     files_count = 0
     start_time = time.time()
@@ -31,31 +34,26 @@ def stats(folder_path: str) -> int:
     context_attributes_wPOMP = context_attributes_all + ["pomp_dim"]
 
     # Iterate over each file in the folder
-    for filename in os.listdir(folder_path):
+    csv_files = (filename for filename in os.listdir(folder_path) if filename.endswith('.csv'))
+    for filename in csv_files:
         print(filename + " started.")
-        if filename.endswith('.csv'):
-            files_count += 1
-            # Read the CSV file into a pandas dataframe
-            file_path = os.path.join(folder_path, filename)
-            df = pd.read_csv(file_path, index_col=0)
-            # df = df.drop(columns=to_drop)
-            total_rows_count += len(df)
+        files_count += 1
+        # Read the CSV file into a pandas dataframe
+        file_path = os.path.join(folder_path, filename)
+        df = pd.read_csv(file_path, index_col=0)
+        total_rows_count += len(df)
 
-            with open(os.path.join(folder_path, filename), newline='') as f:
-                reader = csv.reader(f)
-                header = next(reader)
-                indices_to_exclude = [header.index(col) for col in overhead_columns if col in header]
-                for row in reader:
-                    unique_row = tuple([row[i] for i in range(len(row)) if i not in indices_to_exclude])
-                    unique_rows_count.add(unique_row)
+        indices_to_exclude = [col for col in overhead_columns if col in df.columns]
+        unique_rows |= set(tuple(row) for row in df.drop(columns=indices_to_exclude).to_records(index=False))
 
+        if len(unique_uis) < 1119:
             df = get_col_filtered_df(df,context_attributes_wPOMP)
             # Create Unique UIs for all CSV files processed
             unique_uis = generate_stats_unique_UI_set(df,unique_uis)
 
         print(filename + " contains " + str(len(df)) + " rows.")
         print("So far, there have been " + str(total_rows_count) + " been processed.")
-        print("So far, there are " + str(len(unique_rows_count)) + " unique rows.")
+        print("So far, there are " + str(len(unique_rows)) + " unique rows.")
         print("So far, there are " + str(len(unique_uis)) + " unique user interactions.")
         time.sleep(3)
 
@@ -64,20 +62,20 @@ def stats(folder_path: str) -> int:
     print("File processing complete")
     # Print the total number of unique rows
     print(folder_path + " contains " + str(total_rows_count) + " rows in " + str(files_count) + " files.")
-    print("There are " + str(len(unique_rows_count)) + " unique rows so far.")
+    print("There are " + str(len(unique_rows)) + " unique rows so far.")
     print("There are " + str(len(unique_uis)) + " unique user interactions so far.")
     print("\nExecution time: " +  str(round(tdelta,3)) + " seconds.")
 
-    return total_rows_count, files_count, unique_rows_count, unique_uis
+    return total_rows_count, files_count, len(unique_rows), unique_uis
 
 
-
-def pickle_set(ui_set):
+def pickle_set(ui_set: set, untagged_filename: str) -> None:
     """
     Pickle a set of objects and save to /uiobjects folder
 
     Parameters:
         ui_set (set): Set of objects to be pickled
+        untagged_filename (str: Filename for the pickled file
 
     Returns:
         None
@@ -87,5 +85,33 @@ def pickle_set(ui_set):
         os.mkdir("uiobjects")
 
     # Pickle the set to a file in /uiobjects folder
-    with open("uiobjects/ui_set.pickle", "wb") as f:
+    filename = uiobjects_dir + untagged_filename + ".pickle"
+    with open(filename, "wb") as f:
         pickle.dump(ui_set, f)
+
+def save_data_to_xml(untagged_filename: str, a: int, b: int, c: int) -> None:
+    """
+    Write three integer values to an XML file located at file_path.
+
+    Args:
+        filename (str): Filename of xml file
+        a (int): The total row count
+        b (int): The unique row count
+        c (int): The unique user interaction count
+
+    Returns:
+        None
+
+    Raises:
+        IOError: If there is an error writing to the file.
+    """
+    root = ET.Element("data")
+    element_a = ET.SubElement(root, "Total Row Count")
+    element_a.text = str(a)
+    element_b = ET.SubElement(root, "Unique Row Count")
+    element_b.text = str(b)
+    element_c = ET.SubElement(root, "Unique User Interaction Count")
+    element_c.text = str(c)
+    tree = ET.ElementTree(root)
+    filename = uiobjects_dir + untagged_filename + ".xml"
+    tree.write(filename)

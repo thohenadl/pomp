@@ -6,6 +6,7 @@ seperator = ";"
 log_dir = 'uilogs'
 pomp_tagged_dir = 'pompTagged'
 output_dir = 'output'
+uiobjects_dir = "uiobjects/"
 
 path_to_files = os.path.join(dirname, 'logs')
 path_to_untagged = os.path.join(path_to_files, log_dir)
