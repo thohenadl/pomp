@@ -185,6 +185,7 @@ def log_from_untagged(uiList: set) -> None:
         df = pd.DataFrame(columns=columns)
 
         # Iterate over the userInteraction objects and add each context_array to the DataFrame
+        rows = []
         for ui in uiList:
             row = {}
             for col in columns:
@@ -192,8 +193,8 @@ def log_from_untagged(uiList: set) -> None:
                     row[col] = ui.context_array[col].iloc[0]
                 else:
                     row[col] = None
-            df = df.append(row, ignore_index=True)
-
+            rows.append(row)
+        df = pd.concat([df, pd.DataFrame(rows)])
 
         datetime = time.strftime("%Y%m%d-%H%M%S")
         untagged_filename = "untaggedUI-" + datetime + ".csv"

@@ -9,7 +9,7 @@ import xml.etree.ElementTree as ET
 
 # Imports from Project
 from const import overhead_columns, context_attributes_all, uiobjects_dir
-from util.tagging import generate_stats_unique_UI_set, get_col_filtered_df
+from util.tagging import generate_stats_unique_UI_set, get_col_filtered_df, log_from_untagged
 
 def stats(folder_path: str) -> int:
     """
@@ -69,25 +69,40 @@ def stats(folder_path: str) -> int:
     return total_rows_count, files_count, len(unique_rows), unique_uis
 
 
-def pickle_set(ui_set: set, untagged_filename: str) -> None:
+def store_set(ui_set: set, untagged_filename: str, variant=True) -> None:
     """
-    Pickle a set of objects and save to /uiobjects folder
+    Pickle a set of objects and save to /uiobjects folder and
+        creates csv file in the pomp tagged folder
 
     Parameters:
         ui_set (set): Set of objects to be pickled
         untagged_filename (str: Filename for the pickled file
+        variant (Bool): True for Pickle and CSV file, 
+            False only for CSV file
+            Default: True
 
     Returns:
         None
-    """
-    # Check if /uiobjects folder exists, and create it if not
-    if not os.path.exists("uiobjects"):
-        os.mkdir("uiobjects")
 
-    # Pickle the set to a file in /uiobjects folder
-    filename = uiobjects_dir + untagged_filename + ".pickle"
-    with open(filename, "wb") as f:
-        pickle.dump(ui_set, f)
+    Creates:
+        Pickled Dump of UI set
+        CSV file with UI set
+    """    
+    if variant:
+        # Check if /uiobjects folder exists, and create it if not
+        if not os.path.exists(uiobjects_dir):
+            os.mkdir(uiobjects_dir)
+
+        # Pickle the set to a file in /uiobjects folder
+        filename = uiobjects_dir + untagged_filename + ".pickle"
+        with open(filename, "wb") as f:
+            pickle.dump(ui_set, f)
+        # This part of thefunction provides a function to load a set of UI Objects
+        #     which were generated in the stats.py main. The UI objects
+        #     are loaded, read and stored as a csv file into the POMP
+        #     Tagged folder. Then the file can be loaded in the main.py
+        
+    log_from_untagged(ui_set)
 
 def save_data_to_xml(untagged_filename: str, a: int, b: int, c: int) -> None:
     """
@@ -115,3 +130,17 @@ def save_data_to_xml(untagged_filename: str, a: int, b: int, c: int) -> None:
     tree = ET.ElementTree(root)
     filename = uiobjects_dir + untagged_filename + ".xml"
     tree.write(filename)
+
+def load_pickled(pickled_file_path: str) -> object:
+    """
+    Get a pickled file
+
+    Args:
+        pickled_file_path (str): Filepath to .pickled file
+
+    Returns:
+        The pickled object in the file
+    """
+    # Load the set from the pickled file
+    with open(pickled_file_path, 'rb') as f:
+        return  pickle.load(f)
