@@ -57,16 +57,17 @@ There are two support functions in the project:
 
 + stats.py: Running stats.py generates an XML file with the generic stats about all files in the uilogs folder
 
-  ```bash
-  python stats.py
-  ```
+    ```bash
+    python stats.py
+    ```
 
 + concat.py: Concat several UI logs into a single log file with a Case ID identifier per File
     + Adjust the 'file_path' parameter to a folder
     + Run the concat.py:
-        ```bash
-        python concat.py
-        ```
+    
+    ```bash
+    python concat.py
+    ```
 
 ## Examples
 Show some examples of the project in action.
