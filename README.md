@@ -71,8 +71,12 @@ There are two support functions in the project:
 ## Examples
 Show some examples of the project in action.
 
-## Contribution
-Guidelines on how to contribute to the project.
+## Running Example Log
+We provide a real-life use case log for testing and using the POMP tagging tool.
+These example logs contain various remittance/banking transaction recordings using the [smartRPA](https://github.com/bpm-diag/smartRPA/tree/action_logger) recording tool.
+
+The user interaction logs contain the login into a demo banking account, the selection of the deposit account, and the filling of the transaction with TAN confirmation.
+The logs are available in the 'logs\banking' folder.
 
 ## License
 Please refer to LICENSE file.
