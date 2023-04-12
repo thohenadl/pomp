@@ -19,7 +19,7 @@ def read_multiple_csv_files(file_path: str) -> pd.DataFrame:
         filename = os.path.splitext(os.path.basename(csv_file))[0]
         data['CaseID'] = data['CaseID'].apply(lambda x: f"{filename}_{x}")
         
-        # Append the data to the combined dataframe
-        combined_data = combined_data.append(data, ignore_index=True)
+        # Concat the data to the combined dataframe
+        combined_data = pd.concat([combined_data,data], ignore_index=True)
     
     return combined_data
