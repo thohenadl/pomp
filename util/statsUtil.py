@@ -46,7 +46,7 @@ def stats(folder_path: str) -> int:
         indices_to_exclude = [col for col in overhead_columns if col in df.columns]
         unique_rows |= set(tuple(row) for row in df.drop(columns=indices_to_exclude).to_records(index=False))
 
-        if len(unique_uis) < 1119:
+        if len(unique_uis) < 999999999999999999:
             df = get_col_filtered_df(df,context_attributes_wPOMP)
             # Create Unique UIs for all CSV files processed
             unique_uis = generate_stats_unique_UI_set(df,unique_uis)
@@ -104,15 +104,16 @@ def store_set(ui_set: set, untagged_filename: str, variant=True) -> None:
         
     log_from_untagged(ui_set)
 
-def save_data_to_xml(untagged_filename: str, a: int, b: int, c: int) -> None:
+def save_data_to_xml(untagged_filename: str, total_rows: int, unique_rows: int, unique_uis: int, files: int) -> None:
     """
     Write three integer values to an XML file located at file_path.
 
     Args:
         filename (str): Filename of xml file
-        a (int): The total row count
-        b (int): The unique row count
-        c (int): The unique user interaction count
+        total_rows (int): The total row count
+        unique_rows (int): The unique row count
+        unique_uis (int): The unique user interaction count
+        files (int): Number of files processed
 
     Returns:
         None
@@ -120,13 +121,15 @@ def save_data_to_xml(untagged_filename: str, a: int, b: int, c: int) -> None:
     Raises:
         IOError: If there is an error writing to the file.
     """
-    root = ET.Element("data")
+    root = ET.Element(untagged_filename)
     element_a = ET.SubElement(root, "Total Row Count")
-    element_a.text = str(a)
+    element_a.text = str(total_rows)
     element_b = ET.SubElement(root, "Unique Row Count")
-    element_b.text = str(b)
+    element_b.text = str(unique_rows)
     element_c = ET.SubElement(root, "Unique User Interaction Count")
-    element_c.text = str(c)
+    element_c.text = str(unique_uis)
+    element_d = ET.SubElement(root, "Number of files")
+    element_d.text = str(files)
     tree = ET.ElementTree(root)
     filename = uiobjects_dir + untagged_filename + ".xml"
     tree.write(filename)

@@ -149,11 +149,9 @@ class MyGUI:
         
         # This comparison raises an error
         # To Do: Issue https://github.com/thohenadl/pomp/issues/20
-        if "pomp_dim" not in self.arr.columns:
-            self.arr["pomp_dim"] = ""
+        if pompDimCol not in self.arr.columns:
+            self.arr[pompDimCol] = ""
         
-        # Solves issue #8 - https://github.com/thohenadl/pomp/issues/8
-        self.arr = self.arr[self.arr['pomp_dim'].isna()]
         self.currentLine = 0
         self.clear_window()
 
@@ -161,11 +159,32 @@ class MyGUI:
         self.root.grid_rowconfigure(0, weight = 1)
         self.root.grid_columnconfigure(0, weight = 1)
 
-        self.widget_current_line_text()
+        
         self.widget_action_dropdown()
         self.add_menu()
         self.widget_action_buttons(filename)
+        self.widget_current_line_text()
+        self.widget_current_line_number()
     
+    def widget_current_line_number(self) -> None:
+        """
+        Adds a widget displaying the row count of the current file.
+        Does update the row count on recall of the function.
+        
+        Args:
+        
+        Returns:
+        """
+        if hasattr(self, 'current_line_number_label'):
+            # Remove existing label if current_line_number_label exists
+            self.current_line_number_label.grid_forget()
+            self.current_line_number_label.destroy()
+            
+        self.current_line_number_label = tk.Label(
+            master=self.master,
+            text="Current Line: " + str(self.currentLine) + "/" + str(len(self.arr))
+        )
+        self.current_line_number_label.pack(side=tk.BOTTOM, anchor=tk.W)
 
     def widget_current_line_text(self) -> None:
         """
@@ -182,6 +201,11 @@ class MyGUI:
             bg     = "#ECF0F1",
             fg     = "#34495E",
         )
+        # Fixes Issue #8 - https://github.com/thohenadl/pomp/issues/8
+        while self.currentLine < len(self.arr) and pd.notnull(self.arr.loc[self.currentLine, pompDimCol]):
+            self.currentLine += 1
+
+
         if self.currentLine < len(self.arr):
             contextAttributes = context_attributes_smartRPA + context_attributes_ActionLogger
             if self.hideNAN_state & self.contextValue_state:
@@ -252,7 +276,8 @@ class MyGUI:
             command = lambda: (
                 self.print_input(self.dropdown.get()),
                 # Solves Issue #11 - https://github.com/thohenadl/pomp/issues/11
-                self.widget_current_line_text()
+                self.widget_current_line_text(),
+                self.widget_current_line_number()
             ),
         # style   = "AccentButton",
         )
@@ -363,7 +388,7 @@ class MyGUI:
     def print_input(self, action: str) -> None:
         print("Selected Action: ", action)
         if action in action_Dimensions:
-            self.arr.loc[self.currentLine, "pomp_dim"] = action
+            self.arr.loc[self.currentLine, pompDimCol] = action
         
         self.currentLine += 1
 

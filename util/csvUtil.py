@@ -1,11 +1,10 @@
 import pandas as pd
 import os
-import csv
 from pm4py.objects.log.util import dataframe_utils
 from pm4py.objects.conversion.log import converter as log_converter
 from pm4py.objects.log.importer.xes import importer as xes_importer
 
-
+# Import necessary from project
 from const import *
 
 def prepare_log(log_name: str, version: int, parse_dates=False) -> pd.DataFrame:
@@ -39,7 +38,7 @@ def load_and_convert_to_log(path, case, timestamp):
     return event_log
 
 
-def read_csv(path: str) -> None:
+def read_csv(path: str) -> pd.DataFrame:
     try:
         log_csv = pd.read_csv(path, sep=None)
     except UnicodeDecodeError:

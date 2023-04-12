@@ -28,7 +28,7 @@ if __name__ == "__main__":
         # Store the untagged UIs set into the project
         store_set(unique_uis,untagged_filename, 1)
         # Save some stats to an XML file
-        save_data_to_xml(untagged_filename, total_rows_count, total_files_count, unique_rows)
+        save_data_to_xml(untagged_filename, total_rows_count, unique_rows, len(unique_uis), total_files_count)
     else: 
         loaded_pickled = load_pickled(filepath)
         store_set(loaded_pickled,untagged_filename,False)
