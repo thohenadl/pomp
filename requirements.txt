@@ -1,3 +1,5 @@
+pandas==1.5.3
+pm4py==2.5.3
+numpy==1.24.2
 thinker
-pandas
-pm4py
+argparse
