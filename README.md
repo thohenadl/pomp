@@ -20,8 +20,7 @@ This projects provides two functions:
     * The actions in the UI-log can be clustered based on the Levensthein-distance measure and the clusteres can be tagged
 
 ## Requirements
-List of required libraries or dependencies
-Any other information needed to run the project
+The reuquirements are stored in the requirements.txt file.
 
 ## How to Use
 ### Preliminary Work
