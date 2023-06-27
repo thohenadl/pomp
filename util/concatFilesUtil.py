@@ -16,8 +16,9 @@ def read_multiple_csv_files(file_path: str) -> pd.DataFrame:
         data = pd.read_csv(csv_file)
         
         # Add a new column to the dataframe with the filename as the case_id
-        filename = os.path.splitext(os.path.basename(csv_file))[0]
-        data['CaseID'] = data['CaseID'].apply(lambda x: f"{filename}_{x}")
+        # Necessary if the case name can be redundant per file, but the file name is unique (datetime)
+        # filename = os.path.splitext(os.path.basename(csv_file))[0]
+        # data['case:concept:name'] = data['case:concept:name'].apply(lambda x: f"{filename}_{x}")
         
         # Concat the data to the combined dataframe
         combined_data = pd.concat([combined_data,data], ignore_index=True)

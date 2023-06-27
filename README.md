@@ -1,3 +1,7 @@
+<p align="center">
+    <img src="https://img.shields.io/badge/Python-3.8 (x64)-blue?style=flat&labelColor=3776AB&color=3776AB&logo=python&logoColor=white" /></a>
+</p>
+
 # POMP
 by @thohenadl
 
