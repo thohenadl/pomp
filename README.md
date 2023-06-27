@@ -25,15 +25,15 @@ This projects provides two functions:
 
 ## Manual
 We have created a detailed manual to use the file.
-Please have a look at the manual.pdf
+Please have a look at the POMP_Tagging_User_Manual.pdf
 
 ## Requirements
-The reuquirements are stored in the requirements.txt file.
+The requirements are stored in the requirements.txt file.
 
 ## How to Use
 ### Preliminary Work
 Clone the repository.
-Install the required dependencies
+Install the required dependencies.
 
 'pip install -r requirements.txt'
 
