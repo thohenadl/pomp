@@ -17,9 +17,11 @@ This repository contains the functionality described in Hohenadl et al´s paper 
 
 There can be empty actions as well. These are not required for the task execution in the manual process.
 
-This projects provides two functions:
+This projects provides currently one function:
 * Tagging equal actions in a UI-log
     * An equal action is defined as the same user interaction (e.g. mouse-click) on the same context attributes
+
+For future releases we intend to implement a user action distance measure:
 * Clustering on Levensthein-Distance measure
     * The actions in the UI-log can be clustered based on the Levensthein-distance measure and the clusteres can be tagged
 
