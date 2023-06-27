@@ -224,7 +224,7 @@ class MyGUI:
             else:
                 text.insert(tk.END, self.arr.iloc[self.currentLine])
         else:
-            text.insert(tk.END, "All rows in selcted file have been tagged.")
+            text.insert(tk.END, "All rows in selected file have been tagged.")
             # Solves issue #12 https://github.com/thohenadl/pomp/issues/12
             self.set_button_state(self.button_tag,"disabled")
         text.grid(column = 0, row = 0, columnspan = 3, sticky='nsew')
