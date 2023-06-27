@@ -11,6 +11,3 @@ logs/pompTagged/*
 logs/raw/*
 logs/uilogs/*
 uiobjects/*
-
-#Git Keep
-!*.gitkeep/
