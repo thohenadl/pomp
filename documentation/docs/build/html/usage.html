@@ -1,0 +1,204 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Installation &#8212; pomp 1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Welcome to pomp’s documentation!" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">¶</a></h1>
+<section id="id1">
+<h2>Installation<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h2>
+<p>To install POMP, first you have to pull/clone/fork the repository</p>
+<p>Afterwards, you have to install all requirements using pip or install all libraries
+into a conda environment using e.g. Anaconda.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">()</span> <span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+</pre></div>
+</div>
+</section>
+<section id="adding-files">
+<h2>Adding Files<a class="headerlink" href="#adding-files" title="Permalink to this heading">¶</a></h2>
+<p>When the libraries are installed and before you run the
+tool you can and should add your logs in the folder
+<strong>logs/pompTagged</strong>. The files in this folder will be displayed
+in the selection window of the POMP tagging tool.</p>
+<p>Note! The files have to be in .csv or .xes format. The
+tool currently only supports logs created from smartRPA by
+Agostinelli et al [1] or Action Logger by Leno et al [2].</p>
+</section>
+</section>
+<section id="usage">
+<h1>Usage<a class="headerlink" href="#usage" title="Permalink to this heading">¶</a></h1>
+<p>The tool can be started with running the main file.
+Make sure you are in the correct repository, when running the command.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">()</span> <span class="gp">$ </span>python<span class="w"> </span>main.py
+</pre></div>
+</div>
+<section id="file-selection">
+<h2>File Selection<a class="headerlink" href="#file-selection" title="Permalink to this heading">¶</a></h2>
+<p>The tool will start and display a file selection.
+This is presented in the following figure.
+Now you can select the file you want tag.
+After selecting the file from the drop-down menu, which displays all files from the folder <strong>logs/pompTagged</strong>, you can press the load button.
+During the loading process the tool will go through the file and check if the file was tagged already.</p>
+<img alt="_images/FileSelection.png" src="_images/FileSelection.png" />
+<p>If the file was tagged before and all rows have been tagged with a category from the POMP taxonomy, the following text is displayed: <strong>All rows in selected file have been tagged.</strong>
+To remove tags you have to open the .csv file manually.</p>
+</section>
+<section id="tagging-method">
+<h2>Tagging Method<a class="headerlink" href="#tagging-method" title="Permalink to this heading">¶</a></h2>
+<p>When the file is loaded a single user interaction is shown.
+The interaction is shown as a list of all its parameters, i.e. all parameters the log file provides.
+The application should look as displayed in the following figure.</p>
+<img alt="_images/NewOpenendFile.png" src="_images/NewOpenendFile.png" />
+<p>To ease the use of this screen you can hide all unnecessary parameters.
+To do so you open the options menu and you can select <strong>Hide NaN</strong> or <strong>Context Values only</strong>, see the following figure.
+The ‘Hide NaN’ values option will remove all empty values from the screen and shorten the list of parameters presented.
+The ‘Context Values only’ option will remove all values that are not context parameters.
+As defined in the original paper the context values are all parameters describing the object a user is interacting with.
+The tool is currently limited to the context parameters from [1] and [2].</p>
+<img alt="_images/OptionsMenuPOMP.png" src="_images/OptionsMenuPOMP.png" />
+<p>After reviewing the parameters of the action you can decide on the action type.
+To select the action type the drop down menu on the bottom right is used.
+The menu presents all options from the POMP categories, see the next figure.</p>
+<img alt="_images/ActionSelection.png" src="_images/ActionSelection.png" />
+<p>After selecting the action you have two possible choices to tag the file and one to aboard the tagging process, see the following explanation:</p>
+<ul class="simple">
+<li><p><strong>Submit &amp; go to next line:</strong> This button stores the tag and displays the next untagged action from the user interaction log. You can repeat this until all untagged, unique actions have a POMP tag assigned. <strong>Note!</strong> Only if you store the tags by clicking the second button (Finish and Tag files) the tags will be stored in the .csv file.</p></li>
+<li><p><strong>Finish and Tag files:</strong> This button will use the tagged actions and assign the same tag to all equal user actions. An equal user action is every action with the same context parameters. <strong>Note!</strong> Only this button does store the tags into the .csv or .xes file.</p></li>
+<li><p><strong>Finish (w/o Tagging Files):</strong> This button does discard all changes you have done to the log and will not store the changes into your file.</p></li>
+</ul>
+<img alt="_images/TaggingAction.png" src="_images/TaggingAction.png" />
+</section>
+<section id="some-more-functions">
+<h2>Some more functions<a class="headerlink" href="#some-more-functions" title="Permalink to this heading">¶</a></h2>
+<p>We have added two useful Python functions for working with user interaction logs:</p>
+<p>Running <strong>python concat.py</strong> will create a single file from all log files stored in the folder that is specified in the concat.py file, e.g. <strong>logs/uilogs’</strong>.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">()</span> <span class="gp">$ </span>python<span class="w"> </span>stats.py
+</pre></div>
+</div>
+<p>Running <strong>python stats.py</strong> will provide you with a terminal response about the files in the folder <strong>logs/uilogs</strong>.
+<strong>Note!</strong> This folder is stored as constant in the <strong>const.py</strong> as variable named <strong>path_to_untagged</strong>.</p>
+<p>Next to the terminal response, there will be an <strong>.xml</strong> file and a <strong>.pickle</strong> file stored in the folder <strong>uiobjects</strong>.
+The .xml file contains the stats of the processed files, see the last figure.
+The .pickle file contains a set-type Python object that can be used for future processing, especially for time consuming operations, e.g. calculation of all unique user actions from long user interaction logs.
+The .pickle can be loaded again.
+If the folder <strong>uiobjects</strong>, which should contain the .xml and .pickle file, doe</p>
+<img alt="_images/stats.png" src="_images/stats.png" />
+</section>
+</section>
+<section id="literature">
+<h1>Literature<a class="headerlink" href="#literature" title="Permalink to this heading">¶</a></h1>
+<ul class="simple">
+<li><p>[1] Simone Agostinelli, Marco Lupia, Andrea Marrella, and Massimo Mecella. Smartrpa: A tool to reactively synthesize software robots from user interface logs. In Selmin Nurcan and Axel Korthaus, editors, Intelligent Information Systems, volume 424 of Lecture Notes in Business Information Processing, pages 137–145. Springer International Publishing and Imprint Springer, Cham, 2021.</p></li>
+<li><p>[2] V. Leno, A. Polyvyanyy, M. La Rosa, M. Dumas, and Fabrizio Maria Maggi. Action logger: Enabling process mining for robotic process automation. In Proceedings of the Dissertation Award, Doctoral Consortium, and Demonstration Track at BPM 2019, volume 2420 of CEUR Workshop Proceedings, page 5. CEUR-WS, 2019</p></li>
+</ul>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">pomp</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#adding-files">Adding Files</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#usage">Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#file-selection">File Selection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tagging-method">Tagging Method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#some-more-functions">Some more functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#literature">Literature</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to pomp’s documentation!</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, thohenadl.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/usage.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
